@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Qurate — Student Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:#ffffff; --ink:#0a0a0a; --ink2:#2a2a2a; --ink3:#666666;
+  --navy:#072050; --blue:#0b3a79; --blue-mid:#1252a3; --blue-light:#C3E7FF;
+  --blue-text:#072050; --on-dark:#ffffff; --on-dark2:rgba(195,231,255,0.80);
+  --on-dark3:rgba(195,231,255,0.50); --border:rgba(11,58,121,0.13);
+  --border-strong:rgba(11,58,121,0.28);
+  --r-sm:6px; --r-md:12px; --r-lg:20px; --r-xl:28px;
+}
+
+body { font-family:'DM Sans',system-ui,sans-serif; color:var(--ink); background:var(--bg); line-height:1.6; overflow-x:hidden; }
+
+/* NAV */
+nav {
+  position:sticky; top:0; z-index:100;
+  background:rgba(195,231,255,0.88);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border-bottom:0.5px solid var(--border);
+  padding:0 2rem; height:60px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-logo { display:flex; align-items:center; gap:9px; text-decoration:none; }
+.nav-logo-mark { width:32px; height:32px; border-radius:8px; background:var(--navy); display:flex; align-items:center; justify-content:center; }
+.nav-logo-mark i { font-size:17px; color:var(--blue-light); }
+.nav-logo-text { font-family:'DM Serif Display',serif; font-size:19px; color:var(--ink); letter-spacing:-0.02em; }
+.nav-links { display:flex; align-items:center; gap:1.75rem; list-style:none; }
+.nav-links a { font-size:13.5px; font-weight:500; color:var(--ink2); text-decoration:none; transition:color 0.15s; }
+.nav-links a:hover { color:var(--navy); }
+.nav-cta { background:var(--navy) !important; color:var(--blue-light) !important; padding:7px 18px; border-radius:var(--r-sm); font-size:13px !important; }
+.nav-cta:hover { opacity:0.88; }
+
+/* HERO */
+.hero { padding:5rem 2rem 4rem; max-width:860px; margin:0 auto; text-align:center; }
+.eyebrow {
+  display:inline-flex; align-items:center; gap:6px;
+  background:var(--blue-light); color:var(--blue-text);
+  font-size:12.5px; font-weight:500; padding:5px 14px;
+  border-radius:20px; margin-bottom:1.75rem; letter-spacing:0.01em;
+  animation:fadeSlideDown 0.6s ease both;
+}
+.eyebrow i { font-size:13px; }
+.hero h1 {
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(38px,7vw,64px); line-height:1.08;
+  letter-spacing:-0.03em; margin-bottom:1.25rem; color:var(--ink);
+  animation:fadeSlideUp 0.7s 0.1s ease both;
+}
+.hero h1 em { font-style:italic; color:var(--blue-mid); }
+.hero > p {
+  font-size:17px; color:var(--ink2); max-width:520px;
+  margin:0 auto 2.25rem; line-height:1.75;
+  animation:fadeSlideUp 0.7s 0.2s ease both;
+}
+.hero-actions {
+  display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+  margin-bottom:3.5rem;
+  animation:fadeSlideUp 0.7s 0.3s ease both;
+}
+.btn-primary { display:inline-flex; align-items:center; gap:8px; background:var(--navy); color:var(--blue-light); padding:13px 28px; border-radius:var(--r-sm); font-size:15px; font-weight:500; text-decoration:none; transition:opacity 0.15s;}
+.btn-primary:hover { opacity:0.85; }
+.btn-secondary { display:inline-flex; align-items:center; gap:8px; background:transparent; color:var(--ink2); padding:13px 24px; border-radius:var(--r-sm); font-size:15px; font-weight:500; text-decoration:none; border:0.5px solid var(--border-strong); transition:background 0.15s; }
+.btn-secondary:hover { background:var(--blue-light); }
+.hero-visual { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; max-width:640px; margin:0 auto; animation:fadeSlideUp 0.7s 0.4s ease both; }
+.hero-card { background:var(--blue-light); border:0.5px solid rgba(11,58,121,0.18); border-radius:var(--r-md); padding:1rem; text-align:left; }
+.hero-card-icon { width:36px; height:36px; border-radius:8px; background:#fff; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+.hero-card-icon i { font-size:17px; color:var(--navy); }
+.hero-card h4 { font-size:13px; font-weight:600; margin-bottom:4px; color:var(--navy); }
+.hero-card p  { font-size:12px; color:var(--blue-text); line-height:1.5; opacity:0.75; }
+.hero-card.accent { background:var(--navy); border-color:var(--navy); }
+.hero-card.accent .hero-card-icon { background:rgba(255,255,255,0.14); }
+.hero-card.accent .hero-card-icon i { color:var(--blue-light); }
+.hero-card.accent h4 { color:var(--blue-light); }
+.hero-card.accent p  { color:var(--on-dark3); opacity:1; }
+
+/* SHARED */
+.section { padding:5rem 2rem; max-width:900px; margin:0 auto; }
+.section-label { font-size:11px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--blue-mid); margin-bottom:1rem; }
+.section h2 { font-family:'DM Serif Display',serif; font-size:clamp(26px,4vw,40px); line-height:1.15; letter-spacing:-0.025em; margin-bottom:1rem; max-width:560px; color:var(--ink); }
+.section h2 em { font-style:italic; color:var(--ink3); }
+.section > p { font-size:16px; color:var(--ink2); max-width:520px; line-height:1.75; margin-bottom:2.5rem; }
+.sep { height:0.5px; background:var(--border); max-width:900px; margin:0 auto; }
+
+/* DEMO STEPS */
+.demo-steps { display:flex; flex-direction:column; gap:1.5rem; }
+.demo-step { display:flex; gap:1rem; align-items:flex-start; }
+.step-num {
+  flex-shrink:0;
+  width:36px; height:36px;
+  border-radius:50%;
+  border:2px solid var(--navy);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Serif Display',serif;
+  font-size:16px; font-weight:400;
+  color:var(--navy);
+}
+.step-body h3 { font-size:15px; font-weight:600; margin-bottom:4px; color:var(--ink); }
+.step-body p  { font-size:13.5px; color:var(--ink2); line-height:1.65; margin:0; }
+
+/* SLIDESHOW */
+.slideshow-outer { position:relative; width:100vw; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw; height:70vh; min-height:420px; overflow:hidden; background:var(--navy); }
+.slideshow-track { display:flex; height:100%; transition:transform 0.55s cubic-bezier(0.77,0,0.18,1); will-change:transform; }
+.slide { flex:0 0 100vw; width:100vw; height:100%; position:relative; overflow:hidden; }
+.slide img { width:100%; height:100%; object-fit:cover; display:block; }
+.slide-ph { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; background:linear-gradient(135deg,#072050 0%,#0d2f6a 100%); color:rgba(195,231,255,0.2); }
+.slide-ph i { font-size:64px; }
+.slide-ph span { font-size:14px; font-weight:500; letter-spacing:0.05em; }
+.slide-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(5,16,40,0.65) 0%,transparent 55%); pointer-events:none; }
+.slide-caption { position:absolute; bottom:28px; left:32px; color:#fff; pointer-events:none; }
+.slide-caption strong { display:block; font-size:18px; font-weight:600; line-height:1.2; margin-bottom:4px; }
+.slide-caption span { font-size:13px; color:var(--on-dark2); }
+.ss-arrow { position:absolute; top:50%; transform:translateY(-50%); width:48px; height:48px; border-radius:50%; background:rgba(7,32,80,0.72); border:0.5px solid rgba(195,231,255,0.25); backdrop-filter:blur(6px); color:var(--blue-light); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10; transition:background 0.15s,opacity 0.15s; font-size:22px; }
+.ss-arrow:hover { background:rgba(7,32,80,0.95); }
+.ss-arrow.disabled { opacity:0.25; pointer-events:none; }
+.ss-arrow-prev { left:20px; }
+.ss-arrow-next { right:20px; }
+.ss-dots { position:absolute; bottom:18px; right:28px; display:flex; gap:6px; z-index:10; }
+.ss-dot { width:6px; height:6px; border-radius:50%; background:rgba(195,231,255,0.35); cursor:pointer; transition:background 0.2s,transform 0.2s; }
+.ss-dot.active { background:var(--blue-light); transform:scale(1.4); }
+.ss-counter { position:absolute; top:18px; right:24px; font-size:12px; font-weight:600; color:var(--on-dark2); background:rgba(5,16,40,0.5); backdrop-filter:blur(6px); padding:4px 10px; border-radius:20px; z-index:10; letter-spacing:0.05em; }
+
+/* DEMO */
+.demo-section { padding:5rem 2rem; max-width:1000px; margin:0 auto; }
+.demo-header { margin-bottom:3rem; }
+.demo-header .section-label { margin-bottom:0.5rem; }
+.demo-header h2 { font-family:'DM Serif Display',serif; font-size:clamp(26px,4vw,40px); letter-spacing:-0.025em; line-height:1.15; color:var(--ink); }
+.demo-header h2 em { font-style:italic; color:var(--ink3); }
+.demo-layout { display:grid; grid-template-columns:1fr 320px; gap:4rem; align-items:center; }
+
+/* LAPTOP MOCKUP */
+.laptop-mockup { position:relative; width:100%; }
+.laptop-lid {
+  width:100%;
+  background:var(--navy);
+  border-radius:12px 12px 4px 4px;
+  border:3px solid rgba(195,231,255,0.18);
+  box-shadow:0 24px 64px rgba(7,32,80,0.40), 0 0 0 1px rgba(195,231,255,0.07);
+  position:relative;
+  overflow:hidden;
+}
+/* 16:9 ratio via padding-top trick */
+.laptop-screen-wrap {
+  position:relative;
+  width:100%;
+  padding-top:56.25%; /* 16:9 */
+  background:#0a1628;
+}
+.laptop-screen-wrap video,
+.laptop-screen-wrap .laptop-ph {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+.laptop-screen-wrap video { object-fit:cover; display:block; }
+.laptop-ph {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:14px;
+  background:linear-gradient(160deg,#0d2f6a 0%,#061428 100%);
+  color:rgba(195,231,255,0.2);
+}
+.laptop-ph i { font-size:52px; }
+.laptop-ph span { font-size:12px; font-weight:500; text-align:center; padding:0 20px; line-height:1.5; }
+/* top camera dot */
+.laptop-camera {
+  position:absolute; top:6px; left:50%; transform:translateX(-50%);
+  width:6px; height:6px; border-radius:50%;
+  background:rgba(195,231,255,0.25);
+  z-index:5;
+}
+/* bottom bezel bar */
+.laptop-chin {
+  height:10px;
+  background:linear-gradient(to bottom, #0a1830, #061020);
+  border-top:1px solid rgba(195,231,255,0.06);
+}
+/* base / hinge */
+.laptop-base {
+  width:110%;
+  margin-left:-5%;
+  height:12px;
+  background:linear-gradient(to bottom, #0c1e40, #07132e);
+  border-radius:0 0 8px 8px;
+  border:2px solid rgba(195,231,255,0.10);
+  border-top:none;
+  box-shadow:0 8px 24px rgba(5,12,30,0.5);
+  position:relative;
+}
+/* trackpad notch hint */
+.laptop-base::after {
+  content:'';
+  position:absolute;
+  top:3px; left:50%; transform:translateX(-50%);
+  width:60px; height:4px;
+  border-radius:2px;
+  background:rgba(195,231,255,0.08);
+}
+
+/* PRODUCTS CAROUSEL */
+.products-section { padding:4rem 2rem; max-width:900px; margin:0 auto; }
+.products-header { display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; margin-bottom:1.5rem; }
+.products-header-left .section-label { margin-bottom:0.5rem; }
+.products-header-left h2 { font-family:'DM Serif Display',serif; font-size:clamp(24px,3.5vw,36px); letter-spacing:-0.025em; line-height:1.15; color:var(--ink); }
+.products-header-left h2 em { font-style:italic; color:var(--ink3); }
+.carousel-nav { display:flex; gap:8px; flex-shrink:0; padding-bottom:4px; }
+.carousel-btn { width:38px; height:38px; border-radius:50%; background:var(--navy); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:opacity 0.15s; color:var(--blue-light); }
+.carousel-btn:hover { opacity:0.82; }
+.carousel-btn:disabled { opacity:0.3; cursor:default; }
+.carousel-btn i { font-size:18px; }
+.products-track-wrap { overflow:hidden; }
+.products-track { display:flex; gap:14px; transition:transform 0.4s cubic-bezier(0.4,0,0.2,1); will-change:transform; }
+
+/* PRODUCT CARD */
+.product-card { flex:0 0 200px; background:var(--navy); border-radius:var(--r-lg); overflow:hidden; cursor:pointer; transition:transform 0.18s; position:relative; }
+.product-card:hover { transform:translateY(-3px); }
+.product-img { width:100%; height:140px; background:#0d2f6a; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
+.product-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.product-img .prod-ph { display:flex; flex-direction:column; align-items:center; gap:6px; color:rgba(195,231,255,0.2); position:absolute; }
+.product-img .prod-ph i { font-size:32px; }
+.product-img .prod-ph span { font-size:10px; font-weight:500; }
+.prod-badge { position:absolute; top:8px; left:8px; background:rgba(195,231,255,0.18); color:var(--blue-light); font-size:9px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; padding:3px 7px; border-radius:4px; }
+.product-body { padding:14px; }
+.product-name { font-family:'DM Serif Display',serif; font-size:16px; line-height:1.25; color:var(--on-dark); margin-bottom:4px; letter-spacing:-0.01em; }
+.product-desc { font-size:12px; color:var(--on-dark3); line-height:1.55; margin-bottom:12px; }
+.product-price { font-size:18px; font-weight:600; color:var(--blue-light); letter-spacing:-0.01em; }
+.product-price span { font-size:12px; font-weight:400; color:var(--on-dark3); margin-left:4px; }
+
+/* ── SOLD OUT STICKER ── */
+.sold-out-overlay {
+  position:absolute; inset:0;
+  background:rgba(5,12,30,0.68);
+  display:flex; align-items:center; justify-content:center;
+  z-index:20;
+  border-radius:var(--r-lg);
+  pointer-events:none;
+}
+.sold-stamp {
+  display:inline-flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  width:80px; height:80px; border-radius:50%;
+  border:3px solid #e8363c;
+  background:rgba(10,6,6,0.82);
+  transform:rotate(-18deg);
+  box-shadow:0 0 0 1.5px rgba(232,54,60,0.3), inset 0 0 0 1.5px rgba(232,54,60,0.15);
+  animation:stampIn 0.45s cubic-bezier(0.175,0.885,0.32,1.275) both;
+}
+.sold-stamp-text {
+  font-family:'DM Serif Display',serif;
+  font-size:13px; font-weight:400;
+  color:#e8363c;
+  line-height:1.1;
+  text-align:center;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+}
+.sold-stamp-text .sold-line { display:block; font-size:11px; letter-spacing:0.14em; }
+.sold-stamp-text .out-line  { display:block; font-size:17px; letter-spacing:0.04em; }
+
+.product-card:nth-child(1) .sold-stamp { animation-delay:0.05s; }
+.product-card:nth-child(2) .sold-stamp { animation-delay:0.15s; }
+.product-card:nth-child(3) .sold-stamp { animation-delay:0.25s; }
+.product-card:nth-child(4) .sold-stamp { animation-delay:0.35s; }
+.product-card:nth-child(5) .sold-stamp { animation-delay:0.45s; }
+.product-card:nth-child(6) .sold-stamp { animation-delay:0.55s; }
+.product-card:nth-child(7) .sold-stamp { animation-delay:0.65s; }
+
+.product-card.is-sold .product-img img,
+.product-card.is-sold .prod-ph { filter:grayscale(0.8) brightness(0.75); }
+.product-card.is-sold .product-name,
+.product-card.is-sold .product-price { opacity:0.55; }
+.product-card.is-sold .product-desc { opacity:0.4; }
+
+/* PROBLEM */
+.problem-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.problem-item { background:var(--navy); border-radius:var(--r-md); padding:1.5rem; }
+.problem-item i { font-size:22px; color:var(--blue-light); margin-bottom:0.75rem; display:block; }
+.problem-item h3 { font-size:15px; font-weight:600; margin-bottom:6px; color:var(--on-dark); }
+.problem-item p  { font-size:13.5px; color:var(--on-dark2); line-height:1.65; margin:0; }
+
+/* COST */
+.cost-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:2.5rem; }
+.cost-stat { background:var(--navy); border-radius:var(--r-md); padding:1.5rem 1.25rem; }
+.cost-stat .num { font-family:'DM Serif Display',serif; font-size:36px; line-height:1; color:var(--blue-light); letter-spacing:-0.03em; margin-bottom:6px; }
+.cost-stat .num span { font-size:22px; }
+.cost-stat .lbl { font-size:13px; color:var(--on-dark2); line-height:1.5; }
+.cost-callout { background:var(--blue-light); border:0.5px solid rgba(11,58,121,0.22); border-radius:var(--r-md); padding:1.5rem; display:flex; gap:1rem; align-items:flex-start; }
+.cost-callout i { font-size:22px; color:var(--blue); flex-shrink:0; margin-top:2px; }
+.cost-callout p  { font-size:14.5px; color:var(--navy); line-height:1.65; }
+.cost-callout strong { color:var(--navy); }
+
+/* OFFER */
+.offer-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.offer-card { background:var(--navy); border-radius:var(--r-lg); padding:1.75rem; }
+.offer-card.tall { grid-row:span 2; display:flex; flex-direction:column; justify-content:space-between; }
+.offer-card .tag { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--blue-light); background:rgba(195,231,255,0.14); padding:4px 10px; border-radius:20px; margin-bottom:1rem; }
+.offer-card h3 { font-family:'DM Serif Display',serif; font-size:22px; letter-spacing:-0.02em; margin-bottom:8px; line-height:1.2; color:var(--on-dark); }
+.offer-card > p { font-size:14px; color:var(--on-dark2); line-height:1.7; margin:0; }
+.offer-card.light { background:var(--blue-light); }
+.offer-card.light .tag { background:rgba(11,58,121,0.12); color:var(--blue-mid); }
+.offer-card.light h3 { color:var(--navy); }
+.offer-card.light > p { color:var(--blue-text); opacity:0.8; }
+.offer-card.light .offer-icon-chip { background:#fff; color:var(--navy); }
+.offer-card.light .offer-icon-chip i { color:var(--blue-mid); }
+.offer-icon-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:1.5rem; }
+.offer-icon-chip { display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.12); border-radius:6px; padding:6px 10px; font-size:12px; font-weight:500; color:var(--on-dark2); }
+.offer-icon-chip i { font-size:14px; color:var(--blue-light); }
+
+/* TESTIMONIALS */
+.testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.testi-card { background:var(--navy); border-radius:var(--r-md); padding:1.5rem; }
+.testi-stars { font-size:13px; color:var(--blue-light); margin-bottom:10px; letter-spacing:1px; }
+.testi-card blockquote { font-size:14px; color:var(--on-dark2); line-height:1.7; margin-bottom:1rem; font-style:italic; }
+.testi-author { display:flex; align-items:center; gap:10px; }
+.testi-avatar { width:32px; height:32px; border-radius:50%; background:rgba(195,231,255,0.18); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:var(--blue-light); flex-shrink:0; }
+.testi-name  { font-size:13px; font-weight:600; color:var(--on-dark); }
+.testi-school{ font-size:12px; color:var(--on-dark3); }
+
+/* CONTACT */
+.contact-bg { background:#061630; color:var(--on-dark); padding:5rem 2rem 3rem; }
+.contact-inner { max-width:900px; margin:0 auto; }
+.contact-bg .section-label { color:var(--on-dark3); }
+.contact-bg h2 { font-family:'DM Serif Display',serif; font-size:clamp(26px,4vw,40px); letter-spacing:-0.025em; margin-bottom:1rem; color:var(--on-dark); max-width:500px; }
+.contact-inner > p { font-size:16px; color:var(--on-dark2); max-width:440px; line-height:1.75; margin-bottom:2.5rem; }
+.contact-grid { display:grid; grid-template-columns:1.1fr 0.9fr; gap:2.5rem; align-items:start; }
+.contact-form-wrap { display:flex; flex-direction:column; gap:12px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.form-field { display:flex; flex-direction:column; gap:6px; }
+.form-field label { font-size:12px; font-weight:600; color:var(--on-dark3); letter-spacing:0.05em; text-transform:uppercase; }
+.form-field input, .form-field textarea { background:rgba(255,255,255,0.07); border:0.5px solid rgba(255,255,255,0.18); border-radius:var(--r-sm); padding:11px 14px; font-size:14px; color:var(--on-dark); font-family:inherit; outline:none; transition:border-color 0.15s; resize:none; }
+.form-field input::placeholder, .form-field textarea::placeholder { color:var(--on-dark3); }
+.form-field input:focus, .form-field textarea:focus { border-color:rgba(18,82,163,0.7); background:rgba(255,255,255,0.11); }
+.submit-btn { display:inline-flex; align-items:center; gap:8px; background:var(--blue-mid); color:var(--blue-light); border:none; padding:13px 28px; border-radius:var(--r-sm); font-size:15px; font-weight:500; font-family:inherit; cursor:pointer; transition:opacity 0.15s; width:fit-content; }
+.submit-btn:hover { opacity:0.85; }
+.social-panel { display:flex; flex-direction:column; gap:1.5rem; }
+.social-heading { font-size:13px; font-weight:600; color:var(--on-dark3); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:0.25rem; }
+.insta-preview { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:1rem; }
+.insta-tile { aspect-ratio:1; border-radius:6px; background:rgba(255,255,255,0.07); border:0.5px solid rgba(255,255,255,0.10); display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--on-dark3); overflow:hidden; position:relative; transition:background 0.15s; }
+.insta-tile:hover { background:rgba(255,255,255,0.12); }
+.insta-tile-label { position:absolute; bottom:6px; left:6px; font-size:9px; color:rgba(250,250,247,0.4); font-weight:500; }
+.insta-follow-btn { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,0.07); border:0.5px solid rgba(255,255,255,0.16); border-radius:var(--r-sm); padding:12px 16px; text-decoration:none; color:var(--on-dark); transition:background 0.15s; }
+.insta-follow-btn:hover { background:rgba(255,255,255,0.12); }
+.insta-icon { width:36px; height:36px; background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.insta-icon i { font-size:18px; color:white; }
+.insta-handle { font-size:14px; font-weight:600; }
+.insta-sub    { font-size:12px; color:var(--on-dark3); }
+.insta-arrow  { margin-left:auto; font-size:16px; color:var(--on-dark3); }
+.footer-bar { max-width:900px; margin:3rem auto 0; padding-top:1.5rem; border-top:0.5px solid rgba(255,255,255,0.10); display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+.footer-logo { font-family:'DM Serif Display',serif; font-size:17px; color:var(--on-dark3); }
+.footer-note  { font-size:12px; color:var(--on-dark3); opacity:0.6; }
+
+/* ── SCROLL-REVEAL ── */
+.reveal { opacity:0; transform:translateY(22px); transition:opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity:1; transform:none; }
+
+/* ── KEYFRAMES ── */
+@keyframes fadeSlideDown {
+  from { opacity:0; transform:translateY(-14px); }
+  to   { opacity:1; transform:none; }
+}
+@keyframes fadeSlideUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:none; }
+}
+@keyframes stampIn {
+  0%   { opacity:0; transform:rotate(-18deg) scale(2.2); }
+  60%  { opacity:1; transform:rotate(-18deg) scale(0.88); }
+  80%  { transform:rotate(-18deg) scale(1.06); }
+  100% { transform:rotate(-18deg) scale(1); }
+}
+
+@keyframes statPulse {
+  0%   { transform:scale(1);    box-shadow:0 0 0 0   rgba(7,32,80,0.00); }
+  40%  { transform:scale(1.03); box-shadow:0 0 0 8px rgba(7,32,80,0.08); }
+  55%  { transform:scale(1.03); box-shadow:0 0 0 8px rgba(7,32,80,0.08); }
+  100% { transform:scale(1);    box-shadow:0 0 0 0   rgba(7,32,80,0.00); }
+}
+/* JUMPSCARE */
+.jsc-card {
+  flex: 0 0 200px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  cursor: default;
+}
+.jsc-card img {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  display: block;
+  animation: jscShrink 0.85s cubic-bezier(0.4,0,0.2,1) both;
+}
+@keyframes jscShrink {
+  0%   { transform: scale(6) translate(0,0); }
+  100% { transform: scale(1); }
+}
+.jsc-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #000;
+  display: flex; align-items: center; justify-content: center;
+  animation: jscOverlayFade 0.85s cubic-bezier(0.4,0,0.2,1) both;
+  pointer-events: none;
+}
+.jsc-overlay img {
+  width: 100vw; height: 100vh; object-fit: cover;
+}
+@keyframes jscOverlayFade {
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+/* RESPONSIVE */
+@media (max-width:860px) {
+  .demo-layout { grid-template-columns:1fr; gap:2.5rem; }
+  .demo-layout { grid-template-rows: auto auto; }
+  /* On mobile, put steps first, laptop second */
+  .demo-steps { order:-1; }
+}
+@media (max-width:640px) {
+  nav .nav-links { display:none; }
+  .hero { padding:3rem 1.25rem 2.5rem; }
+  .hero-visual { grid-template-columns:1fr 1fr; }
+  .slideshow-outer { height:55vw; min-height:260px; }
+  .section { padding:3.5rem 1.25rem; }
+  .demo-section, .products-section { padding:3rem 1.25rem; }
+  .cost-row { grid-template-columns:1fr 1fr; }
+  .problem-grid { grid-template-columns:1fr; }
+  .testi-grid { grid-template-columns:1fr; }
+  .offer-grid { grid-template-columns:1fr; }
+  .offer-card.tall { grid-row:span 1; }
+  .contact-grid { grid-template-columns:1fr; }
+  .form-row { grid-template-columns:1fr; }
+  .contact-bg { padding:3.5rem 1.25rem 2rem; }
+  .products-header { flex-direction:column; align-items:flex-start; }
+  .product-card { flex:0 0 160px; }
+  .product-img { height:110px; }
+  .ss-arrow { width:38px; height:38px; font-size:18px; }
+  .slide-caption strong { font-size:15px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="items/logo.jpeg" style="width:95px; height:50px;">
+  </a>
+  <ul class="nav-links">
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#offer">What We Offer</a></li>
+    <li><a href="#testimonials">Reviews</a></li>
+    <li><a href="#contact" class="nav-cta">Contact Us</a></li>
+  </ul>
+</nav>
+
+<div class="slideshow-outer" id="slideshow">
+  <div class="ss-counter" id="ssCounter">1 / 5</div>
+  <div class="slideshow-track" id="ssTrack">
+    <div class="slide"><img src="items/s1.png" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 1 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>Where deals happen.</strong><span>Students buy &amp; sell on campus every day.</span></div></div>
+    <div class="slide"><img src="items/s2.png" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 2 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>Verified. Safe. Simple.</strong><span>Your college ID is your entry pass.</span></div></div>
+    <div class="slide"><img src="items/s3.png" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 3 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>Books that find new homes.</strong><span>Every unused textbook is someone's bargain.</span></div></div>
+    <div class="slide"><img src="items/s4.png" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 4 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>List in under 60 seconds.</strong><span>Snap. AI scans. Done.</span></div></div>
+    <div class="slide"><img src="items/s5.png" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 5 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>The campus market, finally online.</strong><span>Coming soon to your college.</span></div></div>
+  </div>
+  <button class="ss-arrow ss-arrow-prev disabled" id="ssPrev" onclick="ssMove(-1)"><i class="ti ti-chevron-left"></i></button>
+  <button class="ss-arrow ss-arrow-next" id="ssNext" onclick="ssMove(1)"><i class="ti ti-chevron-right"></i></button>
+  <div class="ss-dots" id="ssDots"></div>
+</div>
+
+<section class="hero" style="text-align:left; max-width:900px;">
+  <center><a href="Qurate/index.html" target="_blank"><div class="eyebrow"><i class="ti ti-sparkles"></i> Student-to-student marketplace</div></a></center>
+  <div style="display:grid; grid-template-columns:1fr 48px 1fr; align-items:center; gap:0;">
+    <div>
+      <h1>Buy and sell <em>college supplies</em> without the risk.</h1>
+      <p style="max-width:380px;">Qurate is the trusted peer marketplace built exclusively for students. Verified accounts, AI-checked product quality, and safe transactions — all in one place.</p><br>
+      <div class="hero-actions" style="justify-content:center;">
+        <a href="Qurate/index.html" class="btn-primary" target="_blank"><i class="ti ti-brand-google-play"></i>Try our product</a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfPgkQAjy8pf0W02_rqjX70_DjeHuSDsgy9iuXIqmjR54kkKA/viewform?usp=dialog" class="btn-secondary" target="_blank"><i class="ti ti-play"></i>Help us gain some insights!</a>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:center; align-self:stretch;">
+      <div style="width:0.5px; background:rgba(11,58,121,0.18); height:100%;"></div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div style="background:var(--blue-light); border:0.5px solid rgba(11,58,121,0.22); border-radius:var(--r-md); padding:1.75rem; text-align:center; animation: statPulse 3.2s ease-in-out infinite;">
+        <p style="font-size:12px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--blue-mid); margin-bottom:0.5rem;">Till Date</p>
+        <div style="font-family:'DM Serif Display',serif; font-size:56px; line-height:1; color:var(--navy); letter-spacing:-0.03em; margin-bottom:4px;">1784+</div>
+        <p style="font-size:14px; color:var(--blue-text); opacity:0.7;">sales</p>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="product-card">
+          <b><p style="text-align: center; color:#ffffff;">Top rated !</p></b>
+          <div class="product-img"><img src="items/i1.jpeg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book"></i><span>photo</span></div><div class="prod-badge">Books</div></div>
+          <div class="product-body"><div class="product-name">HC Verma Vol 1 &amp; 2</div><div class="product-desc">Lightly annotated, all pages intact. JEE prep set from 2023 batch.</div><div class="product-price">₹2400 <span>negotiable</span></div></div>
+        </div>
+        <div class="product-card">
+          <b><p style="text-align: center; color:#ffffff;">Most sold !</p></b>
+          <div class="product-img"><img src="items/i2.jpeg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-calculator"></i><span>photo</span></div><div class="prod-badge">Instruments</div></div>
+          <div class="product-body"><div class="product-name">Casio fx-991EX</div><div class="product-desc">Scientific calculator, like new. Cover included. Works perfectly.</div><div class="product-price">₹4500</div></div>
+        </div>
+      </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+
+<div class="products-section" id="products">
+  <div class="products-header">
+    <div class="products-header-left">
+      <p class="section-label">Browse Listings</p>
+      <h2>Products on <em>Qurate sell out fast.</em></h2>
+    </div>
+    <div class="carousel-nav">
+      <button class="carousel-btn" id="prevBtn" onclick="shiftCarousel(-1)" disabled><i class="ti ti-chevron-left"></i></button>
+      <button class="carousel-btn" id="nextBtn" onclick="shiftCarousel(1)"><i class="ti ti-chevron-right"></i></button>
+    </div>
+  </div>
+  <div class="products-track-wrap">
+    <div class="products-track" id="productTrack">
+
+      <div class="product-card is-sold">
+        <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
+        <div class="product-img"><img src="items/i1.jpeg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book"></i><span>photo</span></div><div class="prod-badge">Books</div></div>
+        <div class="product-body"><div class="product-name">HC Verma Vol 1 &amp; 2</div><div class="product-desc">Lightly annotated, all pages intact. JEE prep set from 2023 batch.</div><div class="product-price">₹2400 <span>negotiable</span></div></div>
+      </div>
+
+      <div class="product-card is-sold">
+        <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
+        <div class="product-img"><img src="items/i2.jpeg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-calculator"></i><span>photo</span></div><div class="prod-badge">Instruments</div></div>
+        <div class="product-body"><div class="product-name">Casio fx-991EX</div><div class="product-desc">Scientific calculator, like new. Cover included. Works perfectly.</div><div class="product-price">₹4500</div></div>
+      </div>
+
+      <div class="product-card is-sold">
+        <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
+        <div class="product-img"><img src="items/i3.jpg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-microscope"></i><span>photo</span></div><div class="prod-badge">Lab</div></div>
+        <div class="product-body"><div class="product-name">Lab Coat — Size M</div><div class="product-desc">White, washed once, no stains. Perfect for chem and bio labs.</div><div class="product-price">₹3399</div></div>
+      </div>
+
+      <div class="product-card is-sold">
+        <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
+        <div class="product-img"><img src="items/i4.jpg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-ruler-2"></i><span>photo</span></div><div class="prod-badge">Drafting</div></div>
+        <div class="product-body"><div class="product-name">A1 Drawing Board</div><div class="product-desc">Mini drafter attached, good condition. Used one sem only.</div><div class="product-price">₹6500 <span>or best offer</span></div></div>
+      </div>
+
+      <div class="product-card is-sold">
+        <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
+        <div class="product-img"><img src="items/i5.jpg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-device-laptop"></i><span>photo</span></div><div class="prod-badge">Tech</div></div>
+        <div class="product-body"><div class="product-name">Adjustable Laptop Stand</div><div class="product-desc">Aluminium, folds flat. Fits 13"–17". No scratches.</div><div class="product-price">₹4000</div></div>
+      </div>
+
+      <div class="product-card is-sold">
+        <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
+        <div class="product-img"><img src="items/i6.jpeg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-backpack"></i><span>photo</span></div><div class="prod-badge">Gear</div></div>
+        <div class="product-body"><div class="product-name">Campus Backpack 30L</div><div class="product-desc">Laptop pocket, rain cover included. One year old, solid shape.</div><div class="product-price">₹5000 <span>negotiable</span></div></div>
+      </div>
+
+      <div class="product-card is-sold">
+        <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
+        <div class="product-img"><img src="items/i7.jpeg" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Books</div></div>
+        <div class="product-body"><div class="product-name">Pen kit</div><div class="product-desc">Kit of 10 Gel pens</div><div class="product-price">₹480</div></div>
+      </div>
+
+      <div class="product-card is-sold">
+        <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
+        <div class="product-img"><img src="items/i8.jpg" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Food</div></div>
+        <div class="product-body"><div class="product-name">Coca Cola</div><div class="product-desc">Set of Coca-Cola cans, bottles, and large bottles for collection.</div><div class="product-price">₹220</div></div>
+      </div>
+      <div class="product-card is-sold">
+        <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
+        <div class="product-img"><img src="items/i9.jpg" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Tech</div></div>
+        <div class="product-body"><div class="product-name">Macbook Air</div><div class="product-desc">Apple MacBook Air M5. Used for 4 years but only light work was done.</div><div class="product-price">₹148000</div></div>
+      </div>
+      <div class="product-card is-sold">
+        <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
+        <div class="product-img"><img src="items/i10.jpg" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Gear</div></div>
+        <div class="product-body"><div class="product-name">Glass Bottle</div><div class="product-desc">1l size glass bottle with labels in excellent condition.</div><div class="product-price">₹499</div></div>
+      </div>
+      <div class="product-card is-sold">
+        <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
+        <div class="product-img"><img src="items/i11.jpg" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Tech</div></div>
+        <div class="product-body"><div class="product-name">Printer</div><div class="product-desc">HP Smart Tank 580 All-in-One InkJet printer.</div><div class="product-price">₹48000</div></div>
+      </div>
+      <div class="product-card is-sold">
+        <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
+        <div class="product-img"><img src="items/i12.jpg" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Tech</div></div>
+        <div class="product-body"><div class="product-name">Charger</div><div class="product-desc">High-speed Apple 90W fast-charger.</div><div class="product-price">₹4800</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+
+<div class="demo-section reveal" id="demo">
+  <div class="demo-header">
+    <p class="section-label">See It In Action</p>
+    <h2>From photo to listing in <em>under 60 seconds.</em></h2>
+  </div>
+  <div class="demo-layout">
+    <!-- LAPTOP MOCKUP -->
+    <div class="laptop-mockup">
+      <div class="laptop-lid">
+        <div class="laptop-camera"></div>
+        <div class="laptop-screen-wrap">
+          <video src="items/vid.mp4" autoplay muted loop playsinline id="demoVid">Your browser does not support video.</video>
+          <div class="laptop-ph" id="demoPh">
+            <i class="ti ti-device-laptop"></i>
+            <span>Set src="" on the &lt;video&gt; to show your demo</span>
+          </div>
+        </div>
+        <div class="laptop-chin"></div>
+      </div>
+      <div class="laptop-base"></div>
+    </div>
+    <!-- STEPS -->
+    <div class="demo-steps">
+      <div class="demo-step"><div class="step-num">1</div><div class="step-body"><h3>Snap a photo of your item</h3><p>Open Qurate, hit sell, and take a photo. 1 shot is enough — the AI handles the rest.</p></div></div>
+      <div class="demo-step"><div class="step-num">2</div><div class="step-body"><h3>AI scans condition &amp; price</h3><p>Qurate's model reads the item, assesses condition from the photo, and suggests a fair market price.</p></div></div>
+      <div class="demo-step"><div class="step-num">3</div><div class="step-body"><h3>Review, tweak, and go live</h3><p>Confirm the details, adjust the price, and publish to verified students nearby immediately.</p></div></div>
+      <div class="demo-step"><div class="step-num">4</div><div class="step-body"><h3>Find buyers quickly</h3><p>You are notified. Pay a minimal fee to contact the buyers and sell the product to them in real life. </p></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<section class="section reveal" id="testimonials">
+  <p class="section-label">Testimonials</p>
+  <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; margin-bottom:1.5rem;">
+    <div>
+      <h2 style="margin-bottom:0;">What students are saying.</h2>
+      <p style="margin-top:0.5rem; margin-bottom:0;">Early users from our beta cohort across campuses in Delhi NCR.</p>
+    </div>
+    <div class="carousel-nav" style="flex-shrink:0; padding-bottom:4px;">
+      <button class="carousel-btn" id="testiPrev" onclick="shiftTesti(-1)" disabled><i class="ti ti-chevron-left"></i></button>
+      <button class="carousel-btn" id="testiNext" onclick="shiftTesti(1)"><i class="ti ti-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <div style="overflow:hidden;">
+    <div class="testi-track" id="testiTrack" style="display:flex; gap:14px; transition:transform 0.4s cubic-bezier(0.4,0,0.2,1); will-change:transform;">
+
+      <div class="testi-card" style="flex:0 0 260px;">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"I sold my entire first-year kit in two days. The AI pricing meant I didn't undersell — got 40% more than I expected."</blockquote>
+        <div class="testi-author"><div class="testi-avatar">AR</div><div><div class="testi-name">Aarav R.</div><div class="testi-school">DTU, 2nd year EEE</div></div></div>
+      </div>
+
+      <div class="testi-card" style="flex:0 0 260px;">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"The verification made all the difference. I actually met the seller on campus. No anxiety, no sketchy transfers."</blockquote>
+        <div class="testi-author"><div class="testi-avatar">SP</div><div><div class="testi-name">Simran P.</div><div class="testi-school">NSIT, 3rd year CSE</div></div></div>
+      </div>
+
+      <div class="testi-card" style="flex:0 0 260px;">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"Found a Casio fx-991EX for ₹350 in perfect condition. Would have paid ₹1,100 on Amazon. Can't go back to WhatsApp groups."</blockquote>
+        <div class="testi-author"><div class="testi-avatar">KM</div><div><div class="testi-name">Kabir M.</div><div class="testi-school">Jamia Millia, 1st year ECE</div></div></div>
+      </div>
+
+      <div class="testi-card" style="flex:0 0 260px;">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"Listed my drawing board at 10 pm, had three interested buyers by morning. Sold it before I even had breakfast."</blockquote>
+        <div class="testi-author"><div class="testi-avatar">RV</div><div><div class="testi-name">Riya V.</div><div class="testi-school">IIT Delhi, 2nd year Civil</div></div></div>
+      </div>
+
+      <div class="testi-card" style="flex:0 0 260px;">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"Escrow was the killer feature for me. I'd been scammed on a WhatsApp deal before. Qurate just felt safe from the start."</blockquote>
+        <div class="testi-author"><div class="testi-avatar">NH</div><div><div class="testi-name">Naman H.</div><div class="testi-school">IGDTUW, 3rd year IT</div></div></div>
+      </div>
+
+      <div class="testi-card" style="flex:0 0 260px;">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"Set a watchlist alert for HC Verma and got notified within the same day someone listed it nearby. Absolutely wild."</blockquote>
+        <div class="testi-author"><div class="testi-avatar">PJ</div><div><div class="testi-name">Priya J.</div><div class="testi-school">NSUT, 1st year ME</div></div></div>
+      </div>
+
+      <div class="testi-card" style="flex:0 0 260px;">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"As a seller, the AI-generated description saved me so much time. I just uploaded the photo and tweaked two words. Done."</blockquote>
+        <div class="testi-author"><div class="testi-avatar">AS</div><div><div class="testi-name">Arjun S.</div><div class="testi-school">DTU, 4th year Mech</div></div></div>
+      </div>
+
+      <div class="testi-card" style="flex:0 0 260px;">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"Bought a lab coat that fit perfectly for ₹120. The seller had photos, a condition note — it felt like a real product page."</blockquote>
+        <div class="testi-author"><div class="testi-avatar">TK</div><div><div class="testi-name">Tanvi K.</div><div class="testi-school">AIIMS Delhi, 1st year MBBS</div></div></div>
+      </div>
+
+      <div class="testi-card" style="flex:0 0 260px;">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"I listed a backpack I never used. By the time I got to class, it was sold. The buyer and I were literally in the same building."</blockquote>
+        <div class="testi-author"><div class="testi-avatar">MR</div><div><div class="testi-name">Mihir R.</div><div class="testi-school">GGSIPU, 2nd year BCA</div></div></div>
+      </div>
+
+      <div class="testi-card" style="flex:0 0 260px;">
+        <div class="testi-stars">★★★★★</div>
+        <blockquote>"Every semester I'd throw away stuff or let it collect dust. Now I make back ₹2,000–3,000 each time. Qurate is just the smarter move."</blockquote>
+        <div class="testi-author"><div class="testi-avatar">DG</div><div><div class="testi-name">Divya G.</div><div class="testi-school">Miranda House, 3rd year Chem</div></div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<section class="section reveal" id="problem">
+  <p class="section-label">The Problem</p>
+  <h2>Selling to classmates is <em>a mess.</em></h2>
+  <p>Students have always sold things to each other — but the tools have never been built for them. Facebook groups, WhatsApp broadcasts, and Instagram DMs weren't designed for this.</p>
+  <div class="problem-grid">
+    <div class="problem-item"><i class="ti ti-user-question"></i><h3>No way to verify who you're dealing with</h3><p>Anyone can claim to be a student. You're one bad transaction away from losing money or getting ghosted entirely.</p></div>
+    <div class="problem-item"><i class="ti ti-photo-off"></i><h3>Blurry photos, misleading descriptions</h3><p>Sellers overstate condition, buyers undervalue items. Every deal is a negotiation based on guesswork and trust.</p></div>
+    <div class="problem-item"><i class="ti ti-cash-off"></i><h3>No safe way to pay</h3><p>Cash-first deals go wrong. UPI transfers offer no recourse. If something's wrong with the product, you're stuck.</p></div>
+    <div class="problem-item"><i class="ti ti-search-off"></i><h3>No central place to look</h3><p>Listings are scattered across a dozen platforms. The best deals disappear before you even see them.</p></div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<section class="section reveal" id="cost">
+  <p class="section-label">The Cost</p>
+  <h2>It adds up faster than you think.</h2>
+  <p>The second-hand market for student supplies runs into thousands of crores — yet almost all of it happens through channels with zero protections. Students pay the price.</p>
+  <div class="cost-row">
+    <div class="cost-stat"><div class="num">₹1,43,000<span>+</span></div><div class="lbl">average spent on supplies per semester by a college student</div></div>
+    <div class="cost-stat"><div class="num">1 in 3</div><div class="lbl">students report being cheated in a peer-to-peer sale at least once</div></div>
+    <div class="cost-stat"><div class="num">60<span>%</span></div><div class="lbl">of semester books and stationery go unused after graduation</div></div>
+  </div>
+  <div class="cost-callout">
+    <i class="ti ti-alert-triangle"></i>
+    <p>Most of these losses are <strong>entirely preventable.</strong> They happen not because students are careless, but because the platforms they use weren't built with student safety in mind. <b>Qurate was.</b></p>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<section class="section reveal" id="offer">
+  <p class="section-label">What We Offer</p>
+  <h2>A marketplace actually built for students.</h2>
+  <p>Everything Qurate does flows from one idea: student-to-student commerce should be as safe and simple as buying from a store.</p>
+  <div class="offer-grid">
+    <div class="offer-card tall">
+      <div>
+        <div class="tag"><i class="ti ti-robot"></i> AI-Powered</div>
+        <h3>Smart listing in under 60 seconds</h3>
+        <p style="color:#C3E7FF">Snap a photo, and Qurate's AI reads the item's condition, estimates fair market value, and fills in the listing for you.</p>
+      </div>
+      <div class="offer-icon-row">
+        <div class="offer-icon-chip"><i class="ti ti-camera"></i> Snap</div>
+        <div class="offer-icon-chip"><i class="ti ti-sparkles"></i> Analyse</div>
+        <div class="offer-icon-chip"><i class="ti ti-check"></i> List</div>
+      </div>
+    </div>
+    <div class="offer-card"><div class="tag"><i class="ti ti-shield-check"></i> Verified</div><h3>College ID verification</h3><p>Every account is tied to a verified institutional email or college ID. You always know you're dealing with a real student.</p></div>
+    <div class="offer-card"><div class="tag"><i class="ti ti-lock"></i> Safe Payments</div><h3>Protected transactions</h3><p>Payment is held securely until you confirm the item matches the listing. No transfer until both sides are happy.</p></div>
+    <div class="offer-card light" style="grid-column:span 2;">
+      <div class="tag"><i class="ti ti-bell"></i> Smart Alerts</div>
+      <h3>Notify me when it's available</h3>
+      <p>Tell Qurate what you need — a specific textbook, calculator model, lab coat size — and get an instant alert the moment a verified seller lists it nearby.</p>
+      <div class="offer-icon-row">
+        <a href="Qurate/index.html" target="_blank" style="text-decoration: none;"><div class="offer-icon-chip"><i class="ti ti-book"></i> Textbooks</div></a>
+        <a href="Qurate/index.html" target="_blank" style="text-decoration: none;"><div class="offer-icon-chip"><i class="ti ti-calculator"></i> Instruments</div></a>
+        <a href="Qurate/index.html" target="_blank" style="text-decoration: none;"><div class="offer-icon-chip"><i class="ti ti-backpack"></i> Gear</div></a>
+        <a href="Qurate/index.html" target="_blank" style="text-decoration: none;"><div class="offer-icon-chip"><i class="ti ti-microscope"></i> Lab Equipment</div></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+<div class="sep"></div>
+<div class="contact-bg" id="contact">
+  <div class="contact-inner">
+    <p class="section-label">Get in Touch</p>
+    <h2>Contact Us. We are launching soon.</h2>
+    <p>Be the first to know when Qurate goes live at your campus. Drop us a message or follow us on Instagram for updates.</p>
+    <div class="contact-grid">
+      <form id="waitlistForm" class="contact-form-wrap" onsubmit="submitWaitlist(event)">
+        <div class="form-row">
+          <div class="form-field"><label>First Name</label><input name="first_name" type="text" placeholder="First_Name" /></div>
+          <div class="form-field"><label>Last Name</label><input name="last_name" type="text" placeholder="Last_name" /></div>
+        </div>
+        <div class="form-field"><label>College Email</label><input name="email" type="email" placeholder="you@college.edu.in" /></div>
+        <div class="form-field"><label>College Name</label><input name="college" type="text" placeholder="e.g. DTU, NSIT, IIT Delhi…" /></div>
+        <div class="form-field"><label>Message (optional)</label><textarea name="message" rows="3" placeholder="What would you most want from Qurate?"></textarea></div>
+        <button type="submit" class="submit-btn"><i class="ti ti-send"></i> Join the waitlist</button>
+      </form>
+      <div class="social-panel">
+        <div>
+          <p class="social-heading">Follow on Instagram</p>
+          <a href="https://instagram.com/qurate.official" target="_blank" rel="noopener" class="insta-follow-btn">
+            <div class="insta-icon"><i class="ti ti-brand-instagram"></i></div>
+            <div><div class="insta-handle">@qurate.official</div><div class="insta-sub">Follow for launch updates</div></div>
+            <i class="ti ti-arrow-up-right insta-arrow"></i>
+          </a>
+        </div>
+        <div>
+          <p class="social-heading">Contact Us Directly</p>
+          <a href="mailto:official.qurate@gmail.com" target="_blank" rel="noopener" class="insta-follow-btn">
+            <div class="insta-icon" style="background: linear-gradient(135deg, #0b3a79, #1252a3);">
+              <i class="ti ti-mail" style="font-size:18px; color:white;"></i>
+            </div>
+            <div>
+              <div class="insta-handle">official.qurate@gmail.com</div>
+              <div class="insta-sub">Send us an email</div>
+            </div>
+            <i class="ti ti-arrow-up-right insta-arrow"></i>
+          </a>
+        </div>
+        <div>
+          <p class="social-heading">The Team</p>
+          <p style="color:rgba(195,231,255,0.80);">Junaid Sarmad</p>
+          <p style="color:rgba(195,231,255,0.80);">Tanissha Prashant Gunjal</p>
+          <p style="color:rgba(195,231,255,0.80);">Ishit Bhargava</p>
+          <p style="color:rgba(195,231,255,0.80);">Sarah Hope G.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <span class="footer-logo">Qurate</span>
+      <span class="footer-note">© 2025 Qurate. Built for students, by students.</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const track=document.getElementById('ssTrack');
+  const slides=track.querySelectorAll('.slide');
+  const prev=document.getElementById('ssPrev');
+  const next=document.getElementById('ssNext');
+  const counter=document.getElementById('ssCounter');
+  const dotsEl=document.getElementById('ssDots');
+  const total=slides.length;
+  let cur=0;
+  slides.forEach(s=>{
+    const img=s.querySelector('img');
+    if(img){
+      const hidePh=()=>{ const ph=s.querySelector('.slide-ph'); if(ph) ph.style.display='none'; };
+      if(img.complete && img.naturalWidth>0) hidePh();
+      else img.addEventListener('load', hidePh);
+    }
+  });
+  slides.forEach((_,i)=>{
+    const d=document.createElement('div');
+    d.className='ss-dot'+(i===0?' active':'');
+    d.onclick=()=>goTo(i);
+    dotsEl.appendChild(d);
+  });
+  function goTo(idx){
+    cur=idx;
+    track.style.transform=`translateX(-${cur*100}vw)`;
+    counter.textContent=`${cur+1} / ${total}`;
+    prev.classList.toggle('disabled',cur===0);
+    next.classList.toggle('disabled',cur===total-1);
+    dotsEl.querySelectorAll('.ss-dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
+  }
+  window.ssMove=function(dir){ goTo(Math.max(0,Math.min(total-1,cur+dir))); };
+  document.addEventListener('keydown',e=>{
+    const ss=document.getElementById('slideshow');
+    const r=ss.getBoundingClientRect();
+    if(r.top<window.innerHeight&&r.bottom>0){
+      if(e.key==='ArrowLeft') window.ssMove(-1);
+      if(e.key==='ArrowRight') window.ssMove(1);
+    }
+  });
+  let tsx=null;
+  track.addEventListener('touchstart',e=>tsx=e.touches[0].clientX,{passive:true});
+  track.addEventListener('touchend',e=>{ if(tsx===null) return; const dx=e.changedTouches[0].clientX-tsx; if(Math.abs(dx)>40) window.ssMove(dx<0?1:-1); tsx=null; });
+  goTo(0);
+  setInterval(() => window.ssMove(cur === total - 1 ? -(total - 1) : 1), 4000);
+})();
+
+(function(){
+  const v=document.getElementById('demoVid');
+  const ph=document.getElementById('demoPh');
+  if(v&&v.getAttribute('src')!=='') ph.style.display='none';
+  v&&v.addEventListener('loadedmetadata',()=>ph.style.display='none');
+})();
+
+const _jscAudio = new Audio('items/audio.mp3');
+_jscAudio.preload = 'auto';
+
+(function(){
+  let testiPos = 0;
+  const TGAP = 14;
+  window.shiftTesti = function(dir) {
+    const track = document.getElementById('testiTrack');
+    const cards = track.querySelectorAll('.testi-card');
+    const wrap = track.parentElement;
+    const cardW = cards[0] ? cards[0].offsetWidth + TGAP : 274;
+    const visible = Math.floor(wrap.offsetWidth / cardW);
+    const max = Math.max(0, cards.length - visible);
+    testiPos = Math.max(0, Math.min(max, testiPos + dir));
+    track.style.transform = `translateX(-${testiPos * cardW}px)`;
+    document.getElementById('testiPrev').disabled = testiPos === 0;
+    document.getElementById('testiNext').disabled = testiPos >= max;
+  };
+  window.addEventListener('DOMContentLoaded', () => window.shiftTesti(0));
+  window.addEventListener('resize', () => { testiPos = 0; window.shiftTesti(0); });
+})();
+(function(){
+  let pos=0;
+  const GAP=14;
+  window.shiftCarousel=function(dir){
+    const track=document.getElementById('productTrack');
+    const cards=track.querySelectorAll('.product-card');
+    const wrap=track.parentElement;
+    const cardW=cards[0]?cards[0].offsetWidth+GAP:214;
+    const visible=Math.floor(wrap.offsetWidth/cardW);
+    const max=Math.max(0,cards.length-visible);
+    pos=Math.max(0,Math.min(max,pos+dir));
+    track.style.transform=`translateX(-${pos*cardW}px)`;
+    document.getElementById('prevBtn').disabled=pos===0;
+    document.getElementById('nextBtn').disabled=pos>=max;
+  };
+  window.addEventListener('DOMContentLoaded',()=>window.shiftCarousel(0));
+  window.addEventListener('resize',()=>{ pos=0; window.shiftCarousel(0); });
+  document.querySelectorAll('.product-img img').forEach(img=>{
+    if(img.getAttribute('src')){
+      img.addEventListener('load',()=>{ const ph=img.parentElement.querySelector('.prod-ph'); if(ph) ph.style.display='none'; });
+    }
+  });
+})();
+
+/* scroll reveal */
+(function(){
+  const els=document.querySelectorAll('.reveal');
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+  },{threshold:0.12});
+  els.forEach(el=>io.observe(el));
+})();
+
+async function submitWaitlist(e) {
+  e.preventDefault();
+  const form = document.getElementById('waitlistForm');
+  const btn = form.querySelector('button[type=submit]');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ti ti-loader"></i> Sending…';
+  try {
+    const res = await fetch('https://formspree.io/f/mwvjgyzq', {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      btn.innerHTML = '<i class="ti ti-circle-check"></i> You\'re on the list!';
+      form.reset();
+    } else {
+      throw new Error();
+    }
+  } catch {
+    btn.innerHTML = '<i class="ti ti-alert-circle"></i> Something went wrong';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
