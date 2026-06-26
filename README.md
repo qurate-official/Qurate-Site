@@ -1,7 +1,7 @@
 # Qurate-Site
 The main GitHub repository to host the website landing-page and the e-commerce platform
 
-<a href="https://qurate-official.github.io/Qurate-Site/">Hosted Site</a>
+# <a href="https://qurate-official.github.io/Qurate-Site/">Hosted Site</a>
 Click on the link to explore the Qurate site
 
 # What is Qurate?
