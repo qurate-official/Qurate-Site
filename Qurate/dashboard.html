@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Qurate Campus</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Same CDN as auth.html — exposes window.supabase, no name clash -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <div class="nav-inner">
+        <a class="logo" href="dashboard.html">
+          <img class="logo-img" src="../items/logo.jpeg" alt="Qurate logo" onerror="this.style.display='none'"/>
+        </a>
+        <div class="nav-links">
+          <a class="nav-link active" href="dashboard.html">My Marketplace</a>
+        </div>
+        <div class="nav-actions">
+          <a class="btn btn-primary btn-sm" href="add-listing.html">
+            <i data-lucide="plus"></i><span>Sell Item</span>
+          </a>
+          <button class="btn btn-outline btn-sm" id="logoutBtn">Log out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+    <div class="page-header" style="margin-bottom: 1.5rem;">
+      <h1 class="page-title" id="campusTitle">Loading...</h1>
+      <p class="page-sub" id="userGreeting"></p>
+    </div>
+
+    <div class="dash-stats" id="statsWrapper"></div>
+
+    <div class="tabs">
+      <button class="tab active" id="tabListings" onclick="switchTab('listings')">Marketplace</button>
+      <button class="tab" id="tabMine" onclick="switchTab('mine')">My Listings</button>
+      <button class="tab" id="tabBuyers" onclick="switchTab('buyers')">Buyer Enquiries</button>
+    </div>
+
+    <div id="dashboardContent">
+      <div class="listing-grid" id="listingsTarget"></div>
+      <div class="listing-grid hidden" id="mineTarget"></div>
+      <div id="buyersTarget" class="hidden"></div>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="supabaseClient.js"></script>
+  <script>
+    let currentUser = null;
+    let currentTab  = 'listings';
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await sbClient.auth.signOut();
+      window.location.href = "auth.html";
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      currentUser = await checkUserSession();
+      if (!currentUser) return;
+
+      const meta          = currentUser.user_metadata || {};
+      const firstName     = meta.first_name || '';
+      const lastName      = meta.last_name  || '';
+      const school        = meta.school     || 'campus';
+      const schoolDisplay = school.charAt(0).toUpperCase() + school.slice(1);
+
+      document.getElementById('campusTitle').textContent  = schoolDisplay;
+      document.getElementById('userGreeting').textContent = `Hi, ${firstName} ${lastName}`.trim();
+
+      await loadDashboardMetrics();
+      await loadMarketplaceListings();
+      await loadMyListings();
+      await loadBuyerInterests();
+      lucide.createIcons();
+    });
+
+    async function loadDashboardMetrics() {
+      const { data: listings } = await sbClient
+        .from('listings')
+        .select('price, status')
+        .eq('seller_id', currentUser.id);
+
+      const activeCount = listings?.filter(l => l.status === 'available').length || 0;
+      const soldCount   = listings?.filter(l => l.status === 'sold').length || 0;
+      const totalEarned = listings?.filter(l => l.status === 'sold')
+                                   .reduce((sum, l) => sum + l.price, 0) || 0;
+
+      document.getElementById('statsWrapper').innerHTML = `
+        <div class="stat-card"><div class="stat-value">${activeCount}</div><div class="stat-label">Active Items</div></div>
+        <div class="stat-card"><div class="stat-value">${soldCount}</div><div class="stat-label">Items Sold</div></div>
+        <div class="stat-card"><div class="stat-value">₹${totalEarned}</div><div class="stat-label">Total Liquidated</div></div>
+      `;
+    }
+
+    async function loadMarketplaceListings() {
+      const target = document.getElementById('listingsTarget');
+      const { data, error } = await sbClient
+        .from('listings')
+        .select('*')
+        .eq('status', 'available');
+
+      if (error || !data || data.length === 0) {
+        target.innerHTML = `<p style="padding: 2rem 0; color: var(--ink3);">No listings yet.</p>`;
+        return;
+      }
+      target.innerHTML = data.map(item => listingCard(item)).join('');
+    }
+
+    async function loadMyListings() {
+      const target = document.getElementById('mineTarget');
+      const { data, error } = await sbClient
+        .from('listings')
+        .select('*')
+        .eq('seller_id', currentUser.id);
+
+      if (error || !data || data.length === 0) {
+        target.innerHTML = `<p style="padding: 2rem 0; color: var(--ink3);">You haven't listed anything yet. Hit "Sell Item" to start.</p>`;
+        return;
+      }
+      target.innerHTML = data.map(item => listingCard(item)).join('');
+    }
+
+    function listingCard(item) {
+      return `
+        <div class="listing-card" onclick="window.open('listing.html?id=${item.id}','_blank')" style="cursor:pointer;">
+          <img class="listing-img" src="${item.images?.[0] || 'placeholder.jpg'}" alt="${item.title}">
+          <div class="listing-body">
+            <div class="listing-title">${item.title}</div>
+            <div class="listing-price">₹${item.price}</div>
+            <div style="margin-top:0.5rem;display:flex;align-items:center;gap:0.5rem;">
+              <span class="badge ${item.status === 'available' ? 'badge-green' : 'badge-red'}">${item.status}</span>
+              ${item.ai_score != null ? `<span class="badge" style="background:#e8f0fe;color:#1252a3;">AI ${item.ai_score}/100</span>` : ''}
+            </div>
+          </div>
+        </div>`;
+    }
+
+    async function loadBuyerInterests() {
+      const target = document.getElementById('buyersTarget');
+
+      // First get seller's listing IDs
+      const { data: myListings } = await sbClient
+        .from('listings')
+        .select('id, title')
+        .eq('seller_id', currentUser.id);
+
+      if (!myListings || myListings.length === 0) {
+        target.innerHTML = `<p style="padding: 2rem; color: var(--ink3);">No buyer enquiries yet.</p>`;
+        return;
+      }
+
+      const myIds = myListings.map(l => l.id);
+      const titleMap = Object.fromEntries(myListings.map(l => [l.id, l.title]));
+
+      const { data, error } = await sbClient
+        .from('interests')
+        .select('*')
+        .in('listing_id', myIds);
+
+      if (error || !data || data.length === 0) {
+        target.innerHTML = `<p style="padding: 2rem; color: var(--ink3);">No buyer enquiries yet.</p>`;
+        return;
+      }
+
+      target.innerHTML = data.map(record => `
+        <div class="buyer-row">
+          <div style="flex: 1;">
+            <p style="font-weight: 600; color: var(--navy);">Enquiry re: ${titleMap[record.listing_id] || 'Unknown listing'}</p>
+            <p style="font-size: 0.85rem; background: #f0f4ff; padding: 0.5rem 0.75rem; border-radius: 8px; margin-top: 0.25rem;">"${record.note}"</p>
+            <p style="font-size: 0.75rem; color: #888; margin-top: 0.25rem;">${new Date(record.created_at).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})}</p>
+          </div>
+          <div>
+            <span class="badge badge-yellow">${record.unlocked ? 'Unlocked' : 'Pending'}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function switchTab(mode) {
+      currentTab = mode;
+      ['listings', 'mine', 'buyers'].forEach(t => {
+        document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.toggle('active', t === mode);
+        document.getElementById(`${t}Target`).classList.toggle('hidden', t !== mode);
+      });
+    }
+  </script>
+</body>
+</html>

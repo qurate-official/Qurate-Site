@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketplace Authentication</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg:#ffffff; --ink:#0a0a0a; --ink2:#2a2a2a; --ink3:#666666;
+      --navy:#072050; --blue:#0b3a79; --blue-mid:#1252a3; --blue-light:#C3E7FF;
+      --blue-text:#072050; --on-dark:#ffffff; --on-dark2:rgba(195,231,255,0.80);
+      --on-dark3:rgba(195,231,255,0.50); --border:rgba(11,58,121,0.13);
+      --border-strong:rgba(11,58,121,0.28);
+      --r-sm:6px; --r-md:12px; --r-lg:20px; --r-xl:28px;
+    }
+    body { font-family:'DM Sans',system-ui,sans-serif; }
+  </style>
+</head>
+<body style="background:var(--bg);font-family:sans-serif;" class="flex items-center justify-center min-h-screen antialiased">
+
+  <!-- Subtle bg texture -->
+  <div style="position:absolute;width:700px;height:700px;background:rgba(195,231,255,0.35);border-radius:50%;filter:blur(140px);top:-200px;left:-200px;pointer-events:none;"></div>
+  <div style="position:absolute;width:600px;height:600px;background:rgba(195,231,255,0.2);border-radius:50%;filter:blur(140px);bottom:-150px;right:-150px;pointer-events:none;"></div>
+
+  <div style="width:100%;max-width:440px;margin:0 1rem;padding:2.5rem;background:var(--blue-light);border:1px solid var(--border-strong);border-radius:var(--r-xl);box-shadow:0 8px 40px rgba(11,58,121,0.13);position:relative;z-index:10;">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:2rem;">
+      <img src="../items/logo.jpeg" alt="Qurate" style="width:95px;height:50px;object-fit:cover;margin:0 auto 1rem;display:block;">
+      <h2 id="auth-title" style="color:var(--blue-text);font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin:0 0 0.5rem;">Welcome back</h2>
+      <p id="auth-subtitle" style="color:var(--blue-mid);font-size:0.875rem;margin:0;opacity:0.85;">Log in to manage your listings and profile</p>
+    </div>
+
+    <!-- Status box -->
+    <div id="status-box" style="display:none;margin-bottom:1.25rem;padding:0.875rem 1rem;border-radius:var(--r-md);font-size:0.875rem;border:1px solid;"></div>
+
+    <!-- Form -->
+    <form id="auth-form" style="display:flex;flex-direction:column;gap:1.1rem;">
+
+      <!-- Name row — signup only -->
+      <div id="name-row" style="display:none;gap:0.75rem;flex-direction:row;">
+        <div style="flex:1;">
+          <label style="display:block;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--blue-mid);margin-bottom:0.5rem;">First Name</label>
+          <input type="text" id="first-name"
+            style="width:100%;padding:0.8rem 1rem;background:#fff;border:1.5px solid var(--border-strong);border-radius:var(--r-md);color:var(--ink);font-size:0.95rem;outline:none;box-sizing:border-box;transition:border-color 0.2s;"
+            placeholder="Ishit"
+            onfocus="this.style.borderColor='var(--blue-mid)'"
+            onblur="this.style.borderColor='var(--border-strong)'">
+        </div>
+        <div style="flex:1;">
+          <label style="display:block;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--blue-mid);margin-bottom:0.5rem;">Last Name</label>
+          <input type="text" id="last-name"
+            style="width:100%;padding:0.8rem 1rem;background:#fff;border:1.5px solid var(--border-strong);border-radius:var(--r-md);color:var(--ink);font-size:0.95rem;outline:none;box-sizing:border-box;transition:border-color 0.2s;"
+            placeholder="Bhargava"
+            onfocus="this.style.borderColor='var(--blue-mid)'"
+            onblur="this.style.borderColor='var(--border-strong)'">
+        </div>
+      </div>
+
+      <!-- School row — signup only -->
+      <div id="school-row" style="display:none;">
+        <label style="display:block;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--blue-mid);margin-bottom:0.5rem;">College / School</label>
+        <input type="text" id="school"
+          style="width:100%;padding:0.8rem 1rem;background:#fff;border:1.5px solid var(--border-strong);border-radius:var(--r-md);color:var(--ink);font-size:0.95rem;outline:none;box-sizing:border-box;transition:border-color 0.2s;"
+          placeholder="DTU, NSIT, IIT Delhi…"
+          onfocus="this.style.borderColor='var(--blue-mid)'"
+          onblur="this.style.borderColor='var(--border-strong)'">
+      </div>
+
+      <div>
+        <label style="display:block;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--blue-mid);margin-bottom:0.5rem;">Email Address</label>
+        <input type="email" id="email" required
+          style="width:100%;padding:0.8rem 1rem;background:#fff;border:1.5px solid var(--border-strong);border-radius:var(--r-md);color:var(--ink);font-size:0.95rem;outline:none;box-sizing:border-box;transition:border-color 0.2s,box-shadow 0.2s;"
+          placeholder="you@college.edu"
+          onfocus="this.style.borderColor='var(--blue-mid)'"
+          onblur="this.style.borderColor='var(--border-strong)'">
+      </div>
+
+      <div>
+        <label style="display:block;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--blue-mid);margin-bottom:0.5rem;">Password</label>
+        <input type="password" id="password" required minlength="6"
+          style="width:100%;padding:0.8rem 1rem;background:#fff;border:1.5px solid var(--border-strong);border-radius:var(--r-md);color:var(--ink);font-size:0.95rem;outline:none;box-sizing:border-box;transition:border-color 0.2s;"
+          placeholder="••••••••"
+          onfocus="this.style.borderColor='var(--blue-mid)'"
+          onblur="this.style.borderColor='var(--border-strong)'">
+      </div>
+
+      <button type="submit" id="submit-btn"
+        style="width:100%;padding:0.85rem;background:var(--blue);color:#fff;font-weight:700;font-size:0.95rem;border:none;border-radius:var(--r-md);cursor:pointer;transition:opacity 0.2s,transform 0.1s;margin-top:0.25rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;"
+        onmouseover="this.style.opacity='0.88'"
+        onmouseout="this.style.opacity='1'"
+        onmousedown="this.style.transform='scale(0.98)'"
+        onmouseup="this.style.transform='scale(1)'">
+        <span>Log In</span>
+      </button>
+    </form>
+
+    <!-- Toggle -->
+    <div style="margin-top:1.75rem;text-align:center;border-top:1px solid var(--border-strong);padding-top:1.25rem;font-size:0.875rem;">
+      <span id="toggle-text" style="color:var(--blue-mid);">New to the platform?</span>
+      <button id="toggle-btn"
+        style="color:var(--blue);font-weight:700;margin-left:0.3rem;background:none;border:none;cursor:pointer;transition:opacity 0.2s;"
+        onmouseover="this.style.opacity='0.7'"
+        onmouseout="this.style.opacity='1'">
+        Create an account
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://wppqwnxtojovegfcdewr.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndwcHF3bnh0b2pvdmVnZmNkZXdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzOTIyNjAsImV4cCI6MjA5Nzk2ODI2MH0.v_7EiCzRBy6psQIt0amAxwyeXxLWxJwa3PsQpVNuB0M";
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const authForm       = document.getElementById('auth-form');
+    const emailInput     = document.getElementById('email');
+    const passwordInput  = document.getElementById('password');
+    const firstNameInput = document.getElementById('first-name');
+    const lastNameInput  = document.getElementById('last-name');
+    const schoolInput    = document.getElementById('school');
+    const nameRow        = document.getElementById('name-row');
+    const schoolRow      = document.getElementById('school-row');
+    const submitBtn      = document.getElementById('submit-btn');
+    const authTitle      = document.getElementById('auth-title');
+    const authSubtitle   = document.getElementById('auth-subtitle');
+    const toggleBtn      = document.getElementById('toggle-btn');
+    const toggleText     = document.getElementById('toggle-text');
+    const statusBox      = document.getElementById('status-box');
+
+    let isLoginMode = true;
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) window.location.href = "dashboard.html";
+    });
+
+    toggleBtn.addEventListener('click', () => {
+      isLoginMode = !isLoginMode;
+      hideStatus();
+
+      if (isLoginMode) {
+        authTitle.innerText    = "Welcome back";
+        authSubtitle.innerText = "Log in to manage your listings and profile";
+        submitBtn.querySelector('span').innerText = "Log In";
+        toggleText.innerText   = "New to the platform?";
+        toggleBtn.innerText    = "Create an account";
+
+        nameRow.style.display   = 'none';
+        schoolRow.style.display = 'none';
+        firstNameInput.required = false;
+        lastNameInput.required  = false;
+        schoolInput.required    = false;
+      } else {
+        authTitle.innerText    = "Get started";
+        authSubtitle.innerText = "Create an account to start posting and buying";
+        submitBtn.querySelector('span').innerText = "Sign Up";
+        toggleText.innerText   = "Already have an account?";
+        toggleBtn.innerText    = "Log in instead";
+
+        nameRow.style.display   = 'flex';
+        schoolRow.style.display = 'block';
+        firstNameInput.required = true;
+        lastNameInput.required  = true;
+        schoolInput.required    = true;
+      }
+    });
+
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      hideStatus();
+
+      const email    = emailInput.value.trim();
+      const password = passwordInput.value;
+
+      if (isLoginMode) {
+        const { error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) {
+          showStatus(error.message, "error");
+          setLoading(false);
+        } else {
+          showStatus("Logged in! Redirecting…", "success");
+          setTimeout(() => { window.location.href = "dashboard.html"; }, 1200);
+        }
+      } else {
+        const firstName = firstNameInput.value.trim();
+        const lastName  = lastNameInput.value.trim();
+        const school    = schoolInput.value.trim().toLowerCase();
+
+        if (!firstName || !lastName) {
+          showStatus("Please enter your first and last name.", "error");
+          setLoading(false);
+          return;
+        }
+
+        if (!school) {
+          showStatus("Please enter your college or school name.", "error");
+          setLoading(false);
+          return;
+        }
+
+        const { error } = await sb.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              first_name: firstName,
+              last_name:  lastName,
+              full_name:  `${firstName} ${lastName}`,
+              school:     school
+            }
+          }
+        });
+
+        if (error) {
+          showStatus(error.message, "error");
+          setLoading(false);
+        } else {
+          showStatus("Account created! Check your email to verify before logging in.", "success");
+          authForm.reset();
+          toggleBtn.click();
+          setLoading(false);
+        }
+      }
+    });
+
+    function showStatus(msg, type) {
+      statusBox.innerText = msg;
+      statusBox.style.display = 'block';
+      if (type === "error") {
+        statusBox.style.background   = 'rgba(239,68,68,0.12)';
+        statusBox.style.borderColor  = 'rgba(239,68,68,0.3)';
+        statusBox.style.color        = '#b91c1c';
+      } else {
+        statusBox.style.background   = 'rgba(7,32,80,0.08)';
+        statusBox.style.borderColor  = 'rgba(11,58,121,0.28)';
+        statusBox.style.color        = 'var(--blue-text)';
+      }
+    }
+
+    function hideStatus() { statusBox.style.display = 'none'; }
+
+    function setLoading(isLoading) {
+      submitBtn.disabled       = isLoading;
+      submitBtn.style.opacity  = isLoading ? '0.5' : '1';
+      submitBtn.style.cursor   = isLoading ? 'not-allowed' : 'pointer';
+      submitBtn.querySelector('span').innerText = isLoading ? "Processing…" : (isLoginMode ? "Log In" : "Sign Up");
+    }
+  </script>
+</body>
+</html>

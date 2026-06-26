@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Qurate — Campus Marketplace</title>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+
+:root{
+  --bg:#ffffff;
+  --ink:#0a0a0a;
+  --ink2:#2a2a2a;
+  --ink3:#666666;
+  --navy:#072050;
+  --blue:#0b3a79;
+  --blue-mid:#1252a3;
+  --blue-light:#C3E7FF;
+  --blue-text:#072050;
+  --on-dark:#ffffff;
+  --on-dark2:rgba(195,231,255,0.80);
+  --on-dark3:rgba(195,231,255,0.50);
+  --border:rgba(11,58,121,0.13);
+  --border-strong:rgba(11,58,121,0.28);
+  --r-sm:6px;
+  --r-md:12px;
+  --r-lg:20px;
+  --r-xl:28px;
+  --primary:#1252a3;
+  --primary-dark:#0b3a79;
+  --primary-light:#dbeeff;
+  --card:#ffffff;
+  --secondary:#f0f5ff;
+  --muted:#666666;
+  --text:#0a0a0a;
+  --radius:var(--r-md);
+}
+
+/* Layout */
+.container{max-width:1100px;margin:0 auto;padding:0 1.25rem}
+
+/* ── NAVBAR ── */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:#C3E7FF;
+  border-bottom:1.5px solid rgba(11,58,121,0.18);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:60px;gap:1rem}
+.logo{display:flex;align-items:center;gap:.5rem;text-decoration:none;cursor:pointer}
+.logo-img{width:95px;height:50px;display:block;}
+.logo-text{font-size:1.05rem;font-weight:700;letter-spacing:-.028em;color:var(--navy)}
+.nav-links{display:flex;align-items:center;gap:.15rem}
+.nav-link{
+  display:flex;align-items:center;justify-content:center;gap:.4rem;
+  padding:.42rem .75rem;border-radius:var(--r-sm);
+  font-size:.85rem;font-weight:500;cursor:pointer;
+  text-decoration:none;color:var(--navy);
+  border:none;background:none;transition:all .15s;white-space:nowrap;
+}
+.nav-link:hover,.nav-link.active{background:rgba(7,32,80,0.1);color:var(--navy)}
+.nav-actions{display:flex;align-items:center;gap:.45rem}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;text-align:center;gap:.4rem;
+  padding:.5rem 1.1rem;border-radius:var(--r-sm);
+  font-size:.875rem;font-weight:600;cursor:pointer;
+  border:none;transition:all .15s;text-decoration:none;white-space:nowrap;
+  line-height:1;vertical-align:middle;
+}
+.btn i,.btn svg{display:block;flex-shrink:0}
+.btn-primary{background:var(--blue-mid);color:#fff}
+.btn-primary:hover{background:var(--blue)}
+.btn-outline{background:#fff;color:var(--ink2);border:1.5px solid var(--border-strong)}
+.btn-outline:hover{border-color:var(--blue-mid);color:var(--blue-mid)}
+.btn-ghost{background:none;color:var(--navy)}
+.btn-ghost:hover{background:rgba(7,32,80,0.08);color:var(--navy)}
+.btn-sm{padding:.35rem .75rem;font-size:.8rem}
+.btn-lg{padding:.7rem 1.45rem;font-size:.93rem}
+.btn-danger{background:#fee2e2;color:#dc2626;border:1px solid #fecaca}
+.btn-danger:hover{background:#fecaca}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ── AVATAR ── */
+.avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--navy);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.78rem;flex-shrink:0;
+  border:2px solid rgba(255,255,255,0.35);cursor:pointer;
+  user-select:none;
+}
+.avatar-lg{width:52px;height:52px;font-size:1rem}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:20px;font-size:.72rem;font-weight:600;letter-spacing:.02em}
+.badge-secondary{background:var(--secondary);color:var(--ink3)}
+.badge-primary{background:#dbeeff;color:var(--blue)}
+.badge-green{background:#dcfce7;color:#15803d}
+.badge-yellow{background:#fef9c3;color:#ca8a04}
+.badge-red{background:#fee2e2;color:#dc2626}
+.badge-outline{background:transparent;border:1px solid var(--border);color:var(--ink3)}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.card-p{padding:1.25rem}
+
+/* ── INPUTS ── */
+.input,.textarea,.select{
+  width:100%;padding:.6rem .9rem;
+  border:1.5px solid var(--border-strong);
+  border-radius:var(--r-sm);
+  font-size:.875rem;font-family:inherit;
+  color:var(--ink);background:#fff;outline:none;transition:border-color .15s;
+}
+.input:focus,.textarea:focus,.select:focus{border-color:var(--blue-mid)}
+.textarea{resize:vertical;min-height:80px;line-height:1.5}
+.label{font-size:.8rem;font-weight:600;color:var(--ink2);display:block;margin-bottom:.35rem}
+
+/* ── LISTING GRID ── */
+.listing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:1rem}
+
+/* ── LISTING CARD ── */
+.listing-card{
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:var(--r-md);overflow:hidden;cursor:pointer;transition:all .2s;
+}
+.listing-card:hover{border-color:var(--blue-mid);box-shadow:0 4px 20px rgba(18,82,163,.12);transform:translateY(-2px)}
+.listing-img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--secondary)}
+.listing-img-placeholder{width:100%;aspect-ratio:1;background:var(--secondary);display:flex;align-items:center;justify-content:center;font-size:2.5rem}
+.listing-body{padding:.9rem}
+.listing-title{font-size:.85rem;font-weight:600;margin-bottom:.3rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--ink2)}
+.listing-price{font-size:.98rem;font-weight:700;color:var(--blue)}
+.listing-meta{font-size:.73rem;color:var(--ink3);margin-top:.3rem}
+
+/* ── BROWSER WINDOW ── */
+.browser-window{
+  border:1.5px solid rgba(11,58,121,0.2);
+  border-radius:var(--r-xl);
+  overflow:hidden;
+  box-shadow:0 24px 64px rgba(7,32,80,.12),0 4px 16px rgba(7,32,80,.07);
+  background:#fff;
+}
+.browser-chrome{
+  background:#e8ecf1;
+  border-bottom:1px solid rgba(11,58,121,0.1);
+  padding:.62rem 1rem;
+  display:flex;align-items:center;gap:.75rem;
+}
+.browser-dots{display:flex;gap:.38rem;align-items:center;flex-shrink:0}
+.browser-dot{width:12px;height:12px;border-radius:50%;display:block}
+.browser-dot-r{background:#ff5f57}
+.browser-dot-y{background:#febc2e}
+.browser-dot-g{background:#28c840}
+.browser-address{
+  flex:1;max-width:300px;
+  background:rgba(255,255,255,0.85);
+  border:1px solid rgba(11,58,121,0.13);
+  border-radius:6px;
+  padding:.28rem .7rem;
+  font-size:.72rem;color:var(--ink3);
+  display:flex;align-items:center;gap:.38rem;
+}
+.browser-body{
+  background:#f8fbff;
+  max-height:460px;
+  overflow:hidden;
+  position:relative;
+}
+.browser-fade{
+  position:absolute;bottom:0;left:0;right:0;
+  height:110px;
+  background:linear-gradient(transparent,#f8fbff 80%);
+  display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:1.25rem;
+  pointer-events:none;
+}
+.browser-fade button{pointer-events:auto}
+
+/* ── AI SCAN ── */
+.quality-bar{height:6px;border-radius:3px;background:var(--secondary);overflow:hidden;margin:.5rem 0}
+.quality-fill{height:100%;border-radius:3px;background:var(--blue-mid);transition:width .5s ease}
+.progress{height:8px;background:var(--secondary);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;background:var(--blue-mid);transition:width .4s ease}
+.ai-scanning-bar{height:5px;border-radius:3px;overflow:hidden;background:rgba(11,58,121,0.1);margin-top:.75rem}
+.ai-scanning-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#7fc8f8,var(--blue-mid))}
+
+/* ── TOAST ── */
+.toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:.5rem}
+.toast{background:var(--navy);color:#fff;padding:.75rem 1.1rem;border-radius:var(--r-md);font-size:.85rem;font-weight:500;max-width:320px;animation:slideIn .25s ease;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.toast.success{background:#15803d}
+.toast.error{background:#dc2626}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* ── DROPDOWN ── */
+.dropdown{position:relative}
+.dropdown-menu{position:absolute;right:0;top:calc(100% + 8px);background:#fff;border:1.5px solid var(--border-strong);border-radius:var(--r-md);box-shadow:0 8px 32px rgba(7,32,80,.12);min-width:215px;padding:.35rem;z-index:100;display:none}
+.dropdown-menu.open{display:block}
+.dropdown-item{display:flex;align-items:center;gap:.5rem;padding:.48rem .75rem;border-radius:var(--r-sm);font-size:.85rem;cursor:pointer;color:var(--ink2);border:none;background:none;width:100%;text-align:left;transition:background .1s}
+.dropdown-item:hover{background:var(--secondary)}
+.dropdown-sep{height:1px;background:var(--border);margin:.35rem 0}
+.dropdown-label{padding:.4rem .75rem .3rem;font-size:.78rem;font-weight:600;color:var(--ink2);line-height:1.5}
+
+/* ── DIALOG ── */
+.overlay{position:fixed;inset:0;background:rgba(7,32,80,.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.dialog{background:#fff;border-radius:var(--r-lg);padding:1.5rem;max-width:460px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(7,32,80,.2)}
+.dialog h3{font-size:1.1rem;font-weight:700;margin-bottom:.35rem;color:var(--navy)}
+.dialog p{font-size:.875rem;color:var(--ink3);margin-bottom:1rem;line-height:1.6}
+
+/* ── UTILS ── */
+.sep{height:1px;background:var(--border);margin:1rem 0}
+.section{padding:3rem 0}
+.section-sm{padding:1.5rem 0}
+.stars{display:flex;gap:2px;color:#f59e0b}
+
+/* ── VALUE CARDS ── */
+.value-icon{width:38px;height:38px;background:#dbeeff;color:var(--blue);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* ── FILTER ROW ── */
+.filter-row{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap}
+.filter-row .input,.filter-row .select{width:auto;flex:1;min-width:130px}
+.search-wrap{position:relative;flex:2;min-width:200px}
+.search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--ink3);pointer-events:none}
+.search-wrap .input{padding-left:2.3rem}
+
+/* ── LISTING DETAIL ── */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+@media(max-width:640px){.detail-grid{grid-template-columns:1fr}}
+.detail-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:var(--r-md);border:1.5px solid var(--border);background:var(--secondary)}
+.detail-price{font-size:2rem;font-weight:700;color:var(--blue)}
+
+/* ── AI PANEL ── */
+.ai-panel{background:#f5f9ff;border:1.5px solid rgba(11,58,121,0.12);border-radius:var(--r-md);padding:1rem}
+.ai-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem}
+.ai-score{font-size:1.6rem;font-weight:700;color:var(--blue)}
+
+/* ── SELLER CARD ── */
+.seller-card{display:flex;align-items:center;gap:.85rem;background:#fff;border:1.5px solid var(--border);border-radius:var(--r-md);padding:.9rem;cursor:pointer;transition:border-color .15s}
+.seller-card:hover{border-color:var(--blue-mid)}
+
+/* ── DASHBOARD ── */
+.dash-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;margin-bottom:1.5rem}
+.stat-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--r-md);padding:1rem}
+.stat-value{font-size:1.5rem;font-weight:700;color:var(--blue)}
+.stat-label{font-size:.78rem;color:var(--ink3);margin-top:.2rem}
+.buyer-row{display:flex;align-items:flex-start;gap:.75rem;padding:.9rem;border-radius:var(--r-sm);border:1.5px solid var(--border);margin-bottom:.5rem;background:#fff}
+
+/* ── FORM ── */
+.form-group{margin-bottom:1rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media(max-width:540px){.form-row{grid-template-columns:1fr}}
+.upload-area{border:2px dashed var(--border-strong);border-radius:var(--r-md);padding:2rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--secondary)}
+.upload-area:hover{border-color:var(--blue-mid);background:#dbeeff}
+.image-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-top:.75rem}
+.image-thumb{position:relative;aspect-ratio:1;border-radius:var(--r-sm);overflow:hidden;background:var(--secondary)}
+.image-thumb img{width:100%;height:100%;object-fit:cover}
+.image-thumb .remove-btn{position:absolute;top:3px;right:3px;width:22px;height:22px;background:rgba(0,0,0,.6);color:#fff;border-radius:50%;border:none;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center}
+
+/* ── FLEXBOX UTILS ── */
+.flex{display:flex}.flex-col{flex-direction:column}.items-center{align-items:center}.gap-1{gap:.25rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}
+.justify-between{justify-content:space-between}.justify-center{justify-content:center}
+.text-muted{color:var(--ink3)}.text-sm{font-size:.875rem}.text-xs{font-size:.75rem}.text-lg{font-size:1.1rem}
+.font-semibold{font-weight:600}.font-bold{font-weight:700}
+.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}
+.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}
+.py-2{padding-top:.5rem;padding-bottom:.5rem}.px-4{padding-left:1rem;padding-right:1rem}
+.w-full{width:100%}.hidden{display:none!important}
+.rounded{border-radius:var(--r-md)}.rounded-full{border-radius:50%}
+.bg-secondary{background:var(--secondary)}.border-t{border-top:1px solid var(--border)}
+.text-center{text-align:center}.text-primary{color:var(--blue)}
+.capitalize{text-transform:capitalize}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── CHIP ── */
+.chip-row{display:flex;gap:.5rem;flex-wrap:wrap;margin:.75rem 0}
+.chip{padding:.35rem .85rem;border-radius:20px;font-size:.8rem;font-weight:500;cursor:pointer;border:1.5px solid var(--border-strong);background:#fff;transition:all .15s}
+.chip:hover,.chip.active{border-color:var(--blue-mid);background:#dbeeff;color:var(--blue)}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:.25rem;border-bottom:2px solid var(--border);margin-bottom:1.25rem}
+.tab{padding:.6rem 1rem;font-size:.875rem;font-weight:500;cursor:pointer;color:var(--ink3);border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* ── PROFILE ── */
+.profile-header{display:flex;align-items:flex-start;gap:1.25rem;padding:1.5rem;background:#fff;border:1.5px solid var(--border);border-radius:var(--r-md);margin-bottom:1.25rem}
+.profile-info h2{font-size:1.2rem;font-weight:700;color:var(--navy)}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:1.5rem}
+.page-title{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;color:var(--navy)}
+.page-sub{font-size:.875rem;color:var(--ink3);margin-top:.3rem}
+.back-btn{display:inline-flex;align-items:center;gap:.4rem;color:var(--ink3);font-size:.875rem;cursor:pointer;border:none;background:none;padding:.35rem 0;margin-bottom:1rem;transition:color .15s}
+.back-btn:hover{color:var(--ink)}
+
+/* ── EMPTY STATE ── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 1rem;border:2px dashed var(--border);border-radius:var(--r-md);text-align:center;color:var(--ink3)}
+.empty p{margin-top:.5rem;font-size:.875rem}
+
+/* ── DIVIDER ── */
+.divider{display:flex;align-items:center;gap:.75rem;color:var(--ink3);font-size:.8rem;margin:1rem 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── ANIMATIONS ── */
+.page-view{animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .nav-links{display:none}
+  .hide-mobile{display:none!important}
+  .listing-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a class="logo" onclick="navigate('home')" href="index v3.html">
+        <img class="logo-img" src="items/logo.jpeg"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+          alt="Qurate logo"/>
+        <svg style="display:none;width:34px;height:34px;flex-shrink:0;border-radius:var(--r-sm);background:#C3E7FF" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="34" height="34" rx="7" fill="#dbeeff"/>
+          <path d="M9 25 L17 9 L25 25" stroke="#072050" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 20 L22 20" stroke="#072050" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </a>
+      <div class="nav-links" id="navLinks"></div>
+      <div class="nav-actions" id="navActions"></div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div id="app"></div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- OVERLAY -->
+<div id="overlay" class="overlay hidden" onclick="closeOverlay(event)">
+  <div class="dialog" id="dialogContent" onclick="event.stopPropagation()"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const campuses = [
+  {id:'c1',name:'National University of Singapore',shortName:'NUS',location:'Singapore'},
+  {id:'c2',name:'University of Delhi',shortName:'DU',location:'New Delhi, India'},
+  {id:'c3',name:'University of the Philippines',shortName:'UP',location:'Manila, Philippines'},
+];
+const UNLOCK_FEE = 2.0;
+let users = [
+  {id:'u1',name:'Aisha Rahman',email:'aisha.r@nus.edu.sg',phone:'+65 8123 4567',campusId:'c1',bio:'Final year econ student. Downsizing my dorm before graduation.',rating:4.9,reviewCount:23,joinedAt:'2024-08-12'},
+  {id:'u2',name:'Wei Lin Tan',email:'weilin.t@nus.edu.sg',phone:'+65 9234 5678',campusId:'c2',bio:'Engineering sophomore. I buy and flip gadgets around campus.',rating:4.7,reviewCount:41,joinedAt:'2023-09-01'},
+  {id:'u3',name:'Priya Sharma',email:'priya.s@nus.edu.sg',phone:'+65 8345 6789',campusId:'c2',bio:'Design student, always hunting for second-hand furniture.',rating:5.0,reviewCount:12,joinedAt:'2024-01-20'},
+  {id:'u4',name:'Daniel Koh',email:'daniel.k@nus.edu.sg',phone:'+65 9456 7890',campusId:'c3',bio:'CS student. Selling stuff I no longer use.',rating:4.6,reviewCount:8,joinedAt:'2024-03-05'},
+  {id:'u5',name:'Mei Ling Foo',email:'meiling.f@nus.edu.sg',phone:'+65 8567 8901',campusId:'c1',bio:'Business student and weekend cyclist.',rating:4.8,reviewCount:17,joinedAt:'2023-11-15'},
+  {id:'u6',name:'Rahul Verma',email:'rahul.v@du.ac.in',phone:'+91 98100 12345',campusId:'c2',bio:'DU student selling textbooks.',rating:4.5,reviewCount:6,joinedAt:'2024-06-10'},
+];
+let listings = [
+  {id:'l1',title:'Calculus: Early Transcendentals (8th Ed.)',description:"Stewart's Calculus, 8th edition. Used for one semester. Minimal highlighting, no torn pages. Great for first-year math modules.",price:28,category:'Textbooks',condition:'Good',images:['https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=400&fit=crop'],sellerId:'u2',campusId:'c1',createdAt:'2026-06-14',status:'available',aiCheck:{score:82,condition:'Good',summary:'Photos show a well-kept textbook with normal shelf wear and no structural damage.',highlights:['Spine intact','No water damage','Cover matches title'],flags:['Light edge wear on cover corners']}},
+  {id:'l2',title:'Minimalist LED Desk Lamp',description:'Adjustable white LED desk lamp with 3 brightness levels and a USB charging port. Perfect for late-night study sessions.',price:15,category:'Electronics',condition:'Like New',images:['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=400&fit=crop'],sellerId:'u3',campusId:'c1',createdAt:'2026-06-16',status:'available',aiCheck:{score:95,condition:'Like New',summary:'Item appears nearly new with clean surfaces and no visible scratches or discoloration.',highlights:['Clean finish','All parts present','No visible wear'],flags:[]}},
+  {id:'l3',title:'Compact Dorm Mini Fridge (40L)',description:"White 40L mini fridge, runs quietly and cools well. Used for two semesters. Selling because I'm moving out.",price:65,category:'Appliances',condition:'Good',images:['https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400&h=400&fit=crop'],sellerId:'u4',campusId:'c1',createdAt:'2026-06-11',status:'available',aiCheck:{score:78,condition:'Good',summary:'Exterior is clean with minor scuffs typical of regular dorm use. Door seal looks intact.',highlights:['Door seal intact','Clean interior','No rust visible'],flags:['Minor scuff on left side panel']}},
+  {id:'l4',title:'Commuter Bicycle — Teal Frame',description:'Reliable single-speed commuter bike. Recently serviced, new brake pads. Great for getting around campus quickly.',price:90,category:'Sports & Outdoors',condition:'Excellent',images:['https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400&h=400&fit=crop'],sellerId:'u5',campusId:'c1',createdAt:'2026-06-09',status:'available',aiCheck:{score:88,condition:'Excellent',summary:'Frame and components look well-maintained with no signs of rust or frame damage.',highlights:['No frame rust','Tires inflated','Chain looks clean'],flags:['Slight paint chip near pedal']}},
+  {id:'l5',title:'Wireless Over-Ear Headphones',description:'Matte black wireless headphones with active noise cancelling. Comes with case and charging cable. Battery still holds well.',price:45,category:'Electronics',condition:'Excellent',images:['https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop'],sellerId:'u2',campusId:'c1',createdAt:'2026-06-17',status:'reserved',aiCheck:{score:90,condition:'Excellent',summary:'Headphones appear clean with intact ear cushions and no visible cracks on the band.',highlights:['Cushions intact','No cracks','Includes accessories'],flags:[]}},
+  {id:'l6',title:'Ergonomic Mesh Study Chair',description:'Grey mesh-back study chair with adjustable height. Comfortable for long hours. Some normal wear on the armrests.',price:35,category:'Furniture',condition:'Good',images:['https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=400&h=400&fit=crop'],sellerId:'u3',campusId:'c1',createdAt:'2026-06-08',status:'available',aiCheck:{score:80,condition:'Good',summary:'Chair is structurally sound with light wear consistent with the described condition.',highlights:['Mesh intact','Wheels roll smoothly','Height adjuster works'],flags:['Minor wear on armrests']}},
+  {id:'l7',title:'Physics for Scientists & Engineers (Serway, 10th Ed.)',description:"Two-volume physics set by Serway and Jewett. Used for two physics modules. Some highlighting in early chapters, otherwise clean.",price:32,category:'Textbooks',condition:'Good',images:['https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&h=400&fit=crop'],sellerId:'u1',campusId:'c1',createdAt:'2026-06-18',status:'available',aiCheck:{score:80,condition:'Good',summary:'Textbook shows normal academic wear with moderate highlighting and a firm spine.',highlights:['Spine intact','No water damage'],flags:['Highlighting in chapters 1-6']}},
+  {id:'l8',title:'Introduction to Algorithms — CLRS 4th Ed.',description:"The classic algorithms text. Used for CS2040 and CS3230. Pencil annotations in early chapters, otherwise very clean.",price:45,category:'Textbooks',condition:'Good',images:['https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=400&fit=crop'],sellerId:'u2',campusId:'c1',createdAt:'2026-06-15',status:'available',aiCheck:{score:83,condition:'Good',summary:'Good condition with light pencil annotations in early sections.',highlights:['Spine intact','Cover clean'],flags:['Pencil marks in first few chapters']}},
+  {id:'l9',title:'Chemistry: The Central Science (14th Ed.)',description:"Brown, LeMay and Bursten. Used for one year of gen-chem. Minimal highlighting. Selling because I switched majors.",price:25,category:'Textbooks',condition:'Excellent',images:['https://images.unsplash.com/photo-1589998059171-988d887df646?w=400&h=400&fit=crop'],sellerId:'u3',campusId:'c1',createdAt:'2026-06-12',status:'available',aiCheck:{score:88,condition:'Excellent',summary:'Very clean textbook with minimal use. Pages crisp and cover undamaged.',highlights:['Minimal highlighting','Cover undamaged','Pages crisp'],flags:[]}},
+  {id:'l10',title:'Principles of Economics — Mankiw 9th Ed.',description:"Used once for EC1101E. Near-new condition. Comes with an unused access code card.",price:30,category:'Textbooks',condition:'Excellent',images:['https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=400&fit=crop'],sellerId:'u4',campusId:'c1',createdAt:'2026-06-10',status:'available',aiCheck:{score:91,condition:'Excellent',summary:'Near-new textbook with no highlights or marks anywhere.',highlights:['No highlighting','Spine uncracked','Cover pristine'],flags:[]}},
+  {id:'l11',title:'Modern Korean Textbooks — Vols 1, 2 and 3',description:"Yonsei Korean series, all three volumes. Light pen marks in vols 1 and 2. Good for KL1101 or self-study.",price:18,category:'Textbooks',condition:'Good',images:['https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400&h=400&fit=crop'],sellerId:'u1',campusId:'c1',createdAt:'2026-06-07',status:'available',aiCheck:{score:76,condition:'Good',summary:'Three-volume set shows fair use with pen marks in two books.',highlights:['All 3 volumes present','Spines intact'],flags:['Pen marks in vols 1 and 2']}},
+  {id:'l12',title:'Data Structures & Algorithms in Java (Goodrich)',description:"Goodrich, Tamassia and Goldwasser. Used for CS2040. No annotations, clean throughout. Selling after graduation.",price:22,category:'Textbooks',condition:'Good',images:['https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=400&fit=crop'],sellerId:'u3',campusId:'c1',createdAt:'2026-06-05',status:'available',aiCheck:{score:84,condition:'Good',summary:'Well-kept with minor shelf scuffs on the cover. Interior is clean.',highlights:['Interior clean','No annotations','Binding solid'],flags:['Small scuff on back cover']}},
+  {id:'l13',title:'Financial Accounting — IFRS 3rd Ed. (Weygandt)',description:"Used for BBA1100. Very light use. Great condition. Ideal for accounting or business students.",price:28,category:'Textbooks',condition:'Excellent',images:['https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=400&fit=crop'],sellerId:'u2',campusId:'c1',createdAt:'2026-06-19',status:'available',aiCheck:{score:89,condition:'Excellent',summary:'Accounting textbook in excellent condition with minimal visible use.',highlights:['Pages clean','No markings','Cover near-mint'],flags:[]}},
+  {id:'l14',title:'24-Inch Dell IPS Monitor (1080p, 75Hz)',description:"Dell S2421H 24-inch IPS panel. 75Hz, 4ms, 2x HDMI. No dead pixels. Used two years for study. Includes stand and power cable.",price:95,category:'Electronics',condition:'Excellent',images:['https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=400&fit=crop'],sellerId:'u4',campusId:'c1',createdAt:'2026-06-18',status:'available',aiCheck:{score:88,condition:'Excellent',summary:'Monitor screen is clean with no visible scratches or dead pixels.',highlights:['Screen clean','Stand intact','Ports clean'],flags:['Minor dust on bezel']}},
+  {id:'l15',title:'TKL Mechanical Keyboard — Gateron Brown',description:"Tenkeyless layout, Gateron brown switches, white backlit. USB-C cable included. Great tactile feel for dorm use. About 6 months of use.",price:42,category:'Electronics',condition:'Like New',images:['https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&h=400&fit=crop'],sellerId:'u1',campusId:'c1',createdAt:'2026-06-20',status:'available',aiCheck:{score:93,condition:'Like New',summary:'Keyboard looks nearly new. Keycaps clean with no shine and switches are responsive.',highlights:['Keycaps clean','No shine','Cable included'],flags:[]}},
+  {id:'l16',title:'7-in-1 USB-C Hub (4K HDMI + 100W PD)',description:"7 ports: 4K HDMI, 2x USB-A 3.0, SD and TF card slots, 100W PD pass-through. Used 4 months, works perfectly.",price:24,category:'Electronics',condition:'Like New',images:['https://images.unsplash.com/photo-1625231993520-1e7be11fcb2e?w=400&h=400&fit=crop'],sellerId:'u2',campusId:'c1',createdAt:'2026-06-17',status:'available',aiCheck:{score:94,condition:'Like New',summary:'Hub looks nearly unused with clean ports and no wear on the body.',highlights:['All ports clean','No scratches','Compact form factor'],flags:[]}},
+  {id:'l17',title:'JBL Go 3 Bluetooth Speaker — Teal',description:"Compact JBL Go 3 in teal. Waterproof, great battery life. Small scratch on the bottom that is invisible when placed on a desk.",price:28,category:'Electronics',condition:'Good',images:['https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop'],sellerId:'u5',campusId:'c1',createdAt:'2026-06-14',status:'available',aiCheck:{score:82,condition:'Good',summary:'Speaker is functional and clean. A light scratch is visible on the base only.',highlights:['Grille clean','Buttons functional','Charging port intact'],flags:['Small scratch on underside']}},
+  {id:'l18',title:'Aluminium Laptop Stand (Adjustable, Foldable)',description:"Foldable aluminium stand, adjustable height and angle, supports up to 15.6 inch. Reduces neck strain. Barely used.",price:19,category:'Electronics',condition:'Like New',images:['https://images.unsplash.com/photo-1545389336-cf090694435e?w=400&h=400&fit=crop'],sellerId:'u3',campusId:'c1',createdAt:'2026-06-16',status:'available',aiCheck:{score:96,condition:'Like New',summary:'Stand appears brand new with no scratches or marks on the surface.',highlights:['Surface clean','Adjustments smooth','Rubber feet intact'],flags:[]}},
+  {id:'l19',title:'Wacom Intuos Small Graphics Tablet',description:"Wacom Intuos Small CTL-4100. USB, includes pen and 4 extra nibs. Used for design modules. Works on Mac and Windows.",price:38,category:'Electronics',condition:'Good',images:['https://images.unsplash.com/photo-1626202373838-a5a7b067bd81?w=400&h=400&fit=crop'],sellerId:'u1',campusId:'c1',createdAt:'2026-06-11',status:'available',aiCheck:{score:80,condition:'Good',summary:'Tablet surface shows normal drawing wear. Pen is clean and all nibs included.',highlights:['Surface intact','Pen included','USB cable present'],flags:['Light surface wear from extended use']}},
+  {id:'l20',title:'Logitech C920 HD Pro Webcam (1080p)',description:"1080p autofocus webcam with stereo mic. Clip fits most monitors. Barely used since online classes ended.",price:30,category:'Electronics',condition:'Excellent',images:['https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=400&h=400&fit=crop'],sellerId:'u2',campusId:'c1',createdAt:'2026-06-09',status:'available',aiCheck:{score:90,condition:'Excellent',summary:'Webcam in excellent condition. Lens is clear and clip mechanism is solid.',highlights:['Lens clear','Clip intact','USB cable clean'],flags:[]}},
+  {id:'l21',title:'Anker PowerCore 20000mAh Power Bank',description:"Anker PowerCore 20000 with 2x USB-A and 1x USB-C output. Charges a phone roughly 5 times. Cable included.",price:22,category:'Electronics',condition:'Good',images:['https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=400&h=400&fit=crop'],sellerId:'u4',campusId:'c1',createdAt:'2026-06-13',status:'available',aiCheck:{score:81,condition:'Good',summary:'Power bank shows normal casing wear. Ports are clean and LEDs function normally.',highlights:['Ports clean','LED indicator works','No swelling'],flags:['Surface scuffs on casing']}},
+  {id:'l22',title:'Foldable Study Table (60 x 40 cm, Bamboo)',description:"Lightweight fold-flat table, height adjustable, bamboo surface. Perfect for floor or bed use. Selling because I got a proper desk.",price:25,category:'Furniture',condition:'Good',images:['https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=400&fit=crop'],sellerId:'u3',campusId:'c1',createdAt:'2026-06-08',status:'available',aiCheck:{score:77,condition:'Good',summary:'Table folds correctly and is structurally sound. Light surface marks on top.',highlights:['Folds flat','Height adjust works','No wobble'],flags:['Light surface marks on tabletop']}},
+  {id:'l23',title:'3-Tier Wooden Bookshelf (White, 80cm)',description:"White wooden bookshelf, 3 tiers, approx 80 x 60 x 25 cm. Disassembles flat for transport. Minor marks on back panel.",price:40,category:'Furniture',condition:'Good',images:['https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?w=400&h=400&fit=crop'],sellerId:'u5',campusId:'c1',createdAt:'2026-06-06',status:'available',aiCheck:{score:75,condition:'Good',summary:'Bookshelf is structurally sound with surface marks on back and one corner.',highlights:['All shelves present','Assembly hardware included','No warping'],flags:['Minor scuffs on back panel','Small chip on corner']}},
+  {id:'l24',title:'Bedside Table with Drawer (Pine Wood)',description:"Small pine bedside table, one drawer. Fits well in a single dorm room. Normal wear from two semesters. Dimensions approx 45 x 35 x 55 cm.",price:22,category:'Furniture',condition:'Good',images:['https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=400&h=400&fit=crop'],sellerId:'u1',campusId:'c1',createdAt:'2026-06-04',status:'available',aiCheck:{score:74,condition:'Good',summary:'Bedside table shows moderate use. Drawer is slightly stiff and surface has some marks.',highlights:['Drawer opens','Stable base'],flags:['Surface marks on top','Drawer slightly stiff']}},
+  {id:'l25',title:'Single Memory Foam Mattress Topper (3cm)',description:"3cm memory foam topper for single bed, 90 x 190 cm. Includes removable washable cover. Makes dorm mattresses significantly more comfortable.",price:35,category:'Furniture',condition:'Good',images:['https://images.unsplash.com/photo-1540518614846-7eded433c457?w=400&h=400&fit=crop'],sellerId:'u2',campusId:'c1',createdAt:'2026-06-03',status:'available',aiCheck:{score:73,condition:'Good',summary:'Topper shows normal sleep use. No stains visible and foam is still responsive.',highlights:['Cover clean','No visible stains','Foam responsive'],flags:['Light compression in centre from use']}},
+  {id:'l26',title:'Folding Storage Ottoman and Footrest',description:"Grey fabric storage ottoman that doubles as a seat or footrest. Holds about 20L inside. Folds flat for storage. Used one semester.",price:20,category:'Furniture',condition:'Excellent',images:['https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=400&h=400&fit=crop'],sellerId:'u4',campusId:'c1',createdAt:'2026-06-19',status:'available',aiCheck:{score:86,condition:'Excellent',summary:'Ottoman is clean and intact. Fabric has no tears and lid hinges work correctly.',highlights:['Fabric clean','Lid hinges work','No odour'],flags:[]}},
+  {id:'l27',title:'Magnetic Whiteboard (60 x 45 cm)',description:"Wall-mountable magnetic whiteboard with 3 markers and eraser. Great for planning and equations. Barely used.",price:14,category:'Furniture',condition:'Like New',images:['https://images.unsplash.com/photo-1606326608606-aa0b62935f2b?w=400&h=400&fit=crop'],sellerId:'u3',campusId:'c1',createdAt:'2026-06-20',status:'available',aiCheck:{score:95,condition:'Like New',summary:'Whiteboard surface is clean with no ghosting. All accessories present.',highlights:['Surface clean','Markers included','Mounting hardware present'],flags:[]}},
+  {id:'l28',title:'Tiger Rice Cooker 1.5L',description:"Tiger JAX-T10U 1.5L rice cooker, makes 3-4 servings. Multiple cooking modes. Used 1.5 years. Works perfectly, inner pot still non-stick.",price:24,category:'Appliances',condition:'Good',images:['https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=400&fit=crop'],sellerId:'u5',campusId:'c1',createdAt:'2026-06-17',status:'available',aiCheck:{score:79,condition:'Good',summary:'Rice cooker shows regular use. Exterior has minor staining but interior pot is intact.',highlights:['Inner pot intact','Lid seals properly','All modes functional'],flags:['Minor exterior staining']}},
+  {id:'l29',title:'Philips Electric Kettle 1.7L',description:"Philips 1.7L 2200W kettle. Fast boil with auto shut-off. Barely used — received as a gift after already having one. Spotless inside and out.",price:14,category:'Appliances',condition:'Like New',images:['https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=400&fit=crop'],sellerId:'u1',campusId:'c1',createdAt:'2026-06-21',status:'available',aiCheck:{score:97,condition:'Like New',summary:'Kettle appears virtually unused with a spotless interior and no limescale at all.',highlights:['Interior spotless','Lid snaps firmly','No limescale'],flags:[]}},
+  {id:'l30',title:'Tower Fan with Remote (3-Speed, Oscillating)',description:"Slim tower fan with 3 speed settings and remote control. Oscillates 90 degrees. Works perfectly. Good for a medium-sized dorm room.",price:30,category:'Appliances',condition:'Good',images:['https://images.unsplash.com/photo-1563252722-6434563a985d?w=400&h=400&fit=crop'],sellerId:'u2',campusId:'c1',createdAt:'2026-06-12',status:'available',aiCheck:{score:82,condition:'Good',summary:'Fan is clean and fully functional. Remote included and all three speeds work.',highlights:['Remote included','Oscillation works','Grille clean'],flags:['Some dust in grille slots (easy to clean)']}},
+  {id:'l31',title:'Xiaomi Air Purifier 3C (True HEPA)',description:"Xiaomi Mi Air Purifier 3C, covers up to 30 m2. True HEPA filter, app control via Mi Home. Filter is 4 months old. Great for allergy season.",price:38,category:'Appliances',condition:'Excellent',images:['https://images.unsplash.com/photo-1615719413546-198b25453f85?w=400&h=400&fit=crop'],sellerId:'u3',campusId:'c1',createdAt:'2026-06-10',status:'available',aiCheck:{score:88,condition:'Excellent',summary:'Purifier body is clean and well-maintained. Intake grille looks clear.',highlights:['Body clean','Intake clear','Display functional'],flags:[]}},
+  {id:'l32',title:'Midea 20L Solo Microwave Oven',description:"Compact 20L 700W microwave with 5 power levels and touch controls. Used two years in a dorm. Works perfectly. Moving to a catered hall.",price:50,category:'Appliances',condition:'Good',images:['https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?w=400&h=400&fit=crop'],sellerId:'u4',campusId:'c1',createdAt:'2026-06-09',status:'available',aiCheck:{score:76,condition:'Good',summary:'Microwave interior is clean. Minor staining visible on the exterior side panel.',highlights:['Interior clean','Turntable present','Controls responsive'],flags:['Stain on exterior side panel']}},
+  {id:'l33',title:'Yoga Mat Set — Mat + 2 Cork Blocks + Strap',description:"6mm non-slip mat 183 x 61 cm with two cork blocks and a stretch strap. Used 8 months. Mat still has good grip.",price:22,category:'Sports & Outdoors',condition:'Good',images:['https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=400&fit=crop'],sellerId:'u5',campusId:'c1',createdAt:'2026-06-15',status:'available',aiCheck:{score:80,condition:'Good',summary:'Yoga mat shows use but grip surface is functional. Accessories are clean.',highlights:['Grip surface intact','Blocks included','Strap included'],flags:['Light wear on mat edges']}},
+  {id:'l34',title:'Resistance Band Set — 5 Levels (Fabric)',description:"Set of 5 fabric resistance bands, light to extra-heavy. Only used about a dozen times. All bands still firm and clean.",price:13,category:'Sports & Outdoors',condition:'Like New',images:['https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=400&h=400&fit=crop'],sellerId:'u1',campusId:'c1',createdAt:'2026-06-18',status:'available',aiCheck:{score:95,condition:'Like New',summary:'All five bands are clean with minimal use. Elastic is still firm throughout.',highlights:['All 5 bands present','No fraying','Full stretch function'],flags:[]}},
+  {id:'l35',title:'Speedo Swimming Goggles + Silicone Swim Cap',description:"Speedo Futura Biofuse goggles with anti-fog and UV protection plus a Speedo silicone cap. Used one semester at MPSH pool. Minor frame scratches.",price:16,category:'Sports & Outdoors',condition:'Good',images:['https://images.unsplash.com/photo-1519315901367-f34ff9154487?w=400&h=400&fit=crop'],sellerId:'u2',campusId:'c1',createdAt:'2026-06-11',status:'available',aiCheck:{score:79,condition:'Good',summary:'Goggles show light frame wear but lenses are clear. Cap is elastic and intact.',highlights:['Lenses clear','Seal intact','Cap elastic firm'],flags:['Minor frame scratches']}},
+  {id:'l36',title:'Badminton Rackets x2 + 6 Feather Shuttles',description:"Two Victor rackets and a sealed tube of 6 feather shuttles. Both rackets have good string tension. Cover bags included.",price:28,category:'Sports & Outdoors',condition:'Good',images:['https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop'],sellerId:'u3',campusId:'c1',createdAt:'2026-06-07',status:'available',aiCheck:{score:81,condition:'Good',summary:'Both rackets appear in good shape with intact strings. Grips show normal use.',highlights:['String tension intact','Covers included','Shuttles sealed'],flags:['Grip tape worn on one racket']}},
+  {id:'l37',title:'Nike Pegasus 40 Running Shoes (EU 43)',description:"Nike Air Zoom Pegasus 40 in black and white, EU 43. Around 200km of use. Midsole cushioning still responsive. Upper clean with no holes.",price:48,category:'Sports & Outdoors',condition:'Good',images:['https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop'],sellerId:'u4',campusId:'c1',createdAt:'2026-06-13',status:'available',aiCheck:{score:78,condition:'Good',summary:'Shoes show moderate running use. Upper is clean and sole tread is still visible.',highlights:['Upper clean','No holes','Laces included'],flags:['Moderate sole wear on heel','Light scuffing on toe box']}},
+  {id:'l38',title:'Osprey Talon 33L Hiking Backpack',description:"Osprey Talon 33L in green. Hydration-compatible with ventilated back panel. Used for 5-6 day hikes. Very comfortable. Upgrading to a larger pack.",price:58,category:'Sports & Outdoors',condition:'Excellent',images:['https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop'],sellerId:'u5',campusId:'c1',createdAt:'2026-06-08',status:'available',aiCheck:{score:85,condition:'Excellent',summary:'Backpack is well-maintained with clean fabric and all zippers working smoothly.',highlights:['All zippers smooth','Straps intact','No tears'],flags:['Minor dirt on base panel']}},
+  {id:'l39',title:'Hex Dumbbell Pair — 5kg Each',description:"Pair of 5kg rubber hex dumbbells. Clean, rubber coating intact. Good for toning and light strength training.",price:34,category:'Sports & Outdoors',condition:'Good',images:['https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=400&fit=crop'],sellerId:'u1',campusId:'c1',createdAt:'2026-06-05',status:'available',aiCheck:{score:84,condition:'Good',summary:'Dumbbells appear solid with no cracks in the rubber coating.',highlights:['Rubber intact','No cracks','Weight markings clear'],flags:['Surface scuffs from floor contact']}},
+  {id:'l40',title:'Speed Jump Rope with Built-in Rep Counter',description:"Adjustable speed jump rope with digital count display and ball-bearing handles. Used about 10 times. Great for cardio anywhere.",price:9,category:'Sports & Outdoors',condition:'Like New',images:['https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop'],sellerId:'u2',campusId:'c1',createdAt:'2026-06-20',status:'available',aiCheck:{score:96,condition:'Like New',summary:'Jump rope shows very minimal use. Cable is tangle-free and bearings are smooth.',highlights:['Cable intact','Counter works','Bearings smooth'],flags:[]}},
+  {id:'l41',title:'NUS Crew Neck Pullover Hoodie (Navy, Size M)',description:"Official NUS pullover in navy, size M, from the campus Co-op. Worn a few times for orientation events. Machine-washed, no pilling or fading.",price:16,category:'Clothing',condition:'Excellent',images:['https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400&h=400&fit=crop'],sellerId:'u3',campusId:'c1',createdAt:'2026-06-16',status:'available',aiCheck:{score:90,condition:'Excellent',summary:'Hoodie is clean and vibrant with no pilling. Stitching and drawstrings are intact.',highlights:['No pilling','Colour vibrant','Stitching intact'],flags:[]}},
+  {id:'l42',title:'Waterproof Windbreaker Jacket (Unisex, Size M)',description:"Packable waterproof windbreaker in black, size M (chest up to 107 cm). Taped seams. Used only twice. Perfect for wet campus commutes.",price:30,category:'Clothing',condition:'Like New',images:['https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=400&h=400&fit=crop'],sellerId:'u4',campusId:'c1',createdAt:'2026-06-14',status:'available',aiCheck:{score:94,condition:'Like New',summary:'Jacket appears essentially new. Taped seams are intact and no marks are visible.',highlights:['Seams intact','Zips smooth','No marks'],flags:[]}},
+  {id:'l43',title:"Men's Slim Fit Navy Blazer — EU 50 / UK 40",description:"Slim-fit navy blazer, EU size 50. Worn twice for presentations and dry-cleaned each time. No stains or damage.",price:35,category:'Clothing',condition:'Excellent',images:['https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&h=400&fit=crop'],sellerId:'u5',campusId:'c1',createdAt:'2026-06-19',status:'available',aiCheck:{score:91,condition:'Excellent',summary:'Blazer looks freshly cleaned with no stains, pilling or thread pulls visible.',highlights:['No stains','Buttons intact','Lining intact'],flags:[]}},
+  {id:'l44',title:'Nike Brasilia Gym Duffel Bag (25L)',description:"Nike Brasilia in black, 25L. Side shoe compartment and multiple pockets. About a year of gym use. Clean inside, shoulder strap is solid.",price:20,category:'Clothing',condition:'Good',images:['https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop'],sellerId:'u1',campusId:'c1',createdAt:'2026-06-13',status:'available',aiCheck:{score:82,condition:'Good',summary:'Duffel is clean inside and out. Exterior has light wear marks from regular gym use.',highlights:['Interior clean','Zips functional','No tears'],flags:['Light scuffing on base corners']}},
+  {id:'l45',title:'Bamboo Desk Organiser Set (6 Pieces)',description:"Bamboo 6-piece set: pen holder, phone stand, file tray, drawer unit and two small trays. Keeps a study desk tidy. Very light use.",price:14,category:'Other',condition:'Like New',images:['https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400&h=400&fit=crop'],sellerId:'u3',campusId:'c1',createdAt:'2026-06-17',status:'available',aiCheck:{score:95,condition:'Like New',summary:'Organiser set appears nearly new with clean surfaces across all six pieces.',highlights:['All 6 pieces present','Clean surfaces','No marks'],flags:[]}},
+  {id:'l46',title:'Settlers of Catan + Seafarers Expansion',description:"Base game plus Seafarers expansion. Complete — all tiles, cards and pieces are present. Box shows some corner wear from storage.",price:40,category:'Other',condition:'Good',images:['https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=400&h=400&fit=crop'],sellerId:'u4',campusId:'c1',createdAt:'2026-06-10',status:'available',aiCheck:{score:77,condition:'Good',summary:'Board game components are complete and well-kept. Box shows storage wear only.',highlights:['All pieces accounted for','Cards clean','Tiles intact'],flags:['Box corners worn']}},
+  {id:'l47',title:'Polaroid Now Camera + 2 Film Packs (16 shots)',description:"Polaroid Now i-Type camera in white with autofocus and built-in flash. Includes 2 packs of colour film (16 shots total). Great for events.",price:62,category:'Other',condition:'Excellent',images:['https://images.unsplash.com/photo-1589241062272-c0a000072dfa?w=400&h=400&fit=crop'],sellerId:'u5',campusId:'c1',createdAt:'2026-06-18',status:'available',aiCheck:{score:89,condition:'Excellent',summary:'Camera body is clean with no damage. Film compartment is intact and sealed.',highlights:['Body clean','Flash works','Film included'],flags:[]}},
+  {id:'l48',title:'Arturia MiniLab MKII — 25-Key MIDI Controller',description:"USB MIDI controller with 25 mini keys and 16 pads. Comes with Analog Lab software licence. Used lightly. Mac and Windows compatible.",price:52,category:'Other',condition:'Good',images:['https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=400&h=400&fit=crop'],sellerId:'u1',campusId:'c1',createdAt:'2026-06-06',status:'available',aiCheck:{score:85,condition:'Good',summary:'MIDI controller looks well-maintained. Keys and pads are clean with normal light wear.',highlights:['Keys responsive','Pads clean','USB cable included'],flags:['Minor scratch on top panel']}},
+  {id:'l49',title:'Art Supplies Bundle (Pencils, Acrylics, Brushes)',description:"Bundle: 12 Staedtler pencils (2H to 8B), 24-colour acrylic set, 5 brushes, an A3 sketchbook (half used) and blending stumps. From first-year design studio.",price:26,category:'Other',condition:'Good',images:['https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&h=400&fit=crop'],sellerId:'u2',campusId:'c1',createdAt:'2026-06-15',status:'available',aiCheck:{score:78,condition:'Good',summary:'Art supplies are largely intact. Acrylic paints still sealed and brushes are clean.',highlights:['Paints mostly sealed','Brushes clean','Pencils intact'],flags:['Sketchbook approx 50% used']}},
+  {id:'l50',title:'Portable Monitor 15.6" (USB-C, 1080p, 60Hz)',description:"Lepow 15.6-inch IPS portable monitor. USB-C and mini-HDMI input, 1920x1080 at 60Hz. Smart cover and cable included. Great for dual-screen anywhere.",price:78,category:'Electronics',condition:'Excellent',images:['https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&h=400&fit=crop'],sellerId:'u3',campusId:'c1',createdAt:'2026-06-21',status:'available',aiCheck:{score:87,condition:'Excellent',summary:'Portable monitor screen is clean with no scratches or dead pixels visible.',highlights:['Screen clean','Cover included','Cables present'],flags:[]}},
+];
+let interests = [
+  {id:'i1',listingId:'l1',buyerId:'u3',note:"Hi! Is the book still available? I can meet at the central library this week.",createdAt:'2026-06-15',unlocked:false},
+  {id:'i2',listingId:'l1',buyerId:'u4',note:'Interested! Would you take $25?',createdAt:'2026-06-16',unlocked:false},
+  {id:'i3',listingId:'l5',buyerId:'u5',note:'These look great. Free to meet at the engineering canteen tomorrow?',createdAt:'2026-06-17',unlocked:true},
+  {id:'i4',listingId:'l5',buyerId:'u1',note:'Do they come with the original box?',createdAt:'2026-06-17',unlocked:false},
+];
+const reviews = [
+  {id:'r1',fromUserId:'u3',toUserId:'u2',listingId:'l1',rating:5,comment:'Smooth meetup, item exactly as described. Highly recommend Wei Lin!',createdAt:'2026-05-20'},
+  {id:'r2',fromUserId:'u4',toUserId:'u2',listingId:'l5',rating:4,comment:'Good communication and fair price. Showed up on time.',createdAt:'2026-05-28'},
+  {id:'r3',fromUserId:'u5',toUserId:'u1',listingId:'l3',rating:5,comment:'Aisha was super friendly and the item was spotless. Would buy again.',createdAt:'2026-06-01'},
+];
+const categories = ['Textbooks','Electronics','Furniture','Appliances','Sports & Outdoors','Clothing','Other'];
+const samplePhotos = [
+  'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400&h=400&fit=crop',
+  'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400&h=400&fit=crop',
+];
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let currentUserId = 'u1';
+let currentView = 'home';
+let currentParams = {};
+
+// Browse state
+let browseQuery = '', browseCategory = 'all', browseSort = 'recent';
+
+// Sell state
+let sellImages = [], sellTitle = '', sellDesc = '', sellPrice = '', sellCategory = '';
+let sellScanning = false, sellAiCheck = null;
+
+function resetSell(){
+  sellImages=[];sellTitle='';sellDesc='';sellPrice='';sellCategory='';
+  sellScanning=false;sellAiCheck=null;
+}
+
+// ── HELPERS ──
+function getUser(id){return users.find(u=>u.id===id)}
+function getCampusName(id){return campuses.find(c=>c.id===id)?.shortName||'Campus'}
+function getListing(id){return listings.find(l=>l.id===id)}
+function campusListings(){
+  if(!currentUserId)return[];
+  const u=getUser(currentUserId);
+  return listings.filter(l=>l.campusId===u.campusId&&l.sellerId!==currentUserId);
+}
+function myListings(){if(!currentUserId)return[];return listings.filter(l=>l.sellerId===currentUserId)}
+function interestsForListing(lid){return interests.filter(i=>i.listingId===lid)}
+function reviewsForUser(uid){return reviews.filter(r=>r.toUserId===uid)}
+function hasInterest(lid){if(!currentUserId)return false;return interests.some(i=>i.listingId===lid&&i.buyerId===currentUserId)}
+function initials(name){return name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase()}
+function genId(p){return p+'_'+Math.random().toString(36).slice(2,8)}
+function qualityTone(score){
+  if(score>=90)return{label:'Like new condition',cls:'badge-green'};
+  if(score>=78)return{label:'Good condition',cls:'badge-primary'};
+  return{label:'Fair condition',cls:'badge-yellow'};
+}
+function stars(r){return Array(5).fill(0).map((_,i)=>`<i data-lucide="star" style="width:13px;height:13px;fill:${i<Math.round(r)?'#f59e0b':'none'};color:#f59e0b"></i>`).join('')}
+function statusBadge(s){
+  if(s==='reserved')return`<span class="badge badge-yellow">Reserved</span>`;
+  if(s==='sold')return`<span class="badge badge-red">Sold</span>`;
+  return`<span class="badge badge-green">Available</span>`;
+}
+function fmtDate(d){try{return new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}catch{return d}}
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function navigate(view, params={}){
+  sellScanning=false; // reset scan state so navigating away and back works cleanly
+
+  currentView=view;
+  currentParams=params;
+  window.scrollTo(0,0);
+  render();
+}
+
+// ══════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════
+function toast(msg, type='success'){
+  const c=document.getElementById('toastContainer');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.textContent=msg;
+  c.appendChild(t);
+  setTimeout(()=>{
+    t.style.opacity='0';t.style.transform='translateX(20px)';t.style.transition='all .3s';
+    setTimeout(()=>t.remove(),300);
+  },3000);
+}
+
+// ══════════════════════════════════════════
+// OVERLAY
+// ══════════════════════════════════════════
+function showDialog(html){
+  document.getElementById('dialogContent').innerHTML=html;
+  document.getElementById('overlay').classList.remove('hidden');
+  lucide.createIcons();
+}
+function closeOverlay(e){document.getElementById('overlay').classList.add('hidden')}
+
+// ══════════════════════════════════════════
+// NAVBAR
+// ══════════════════════════════════════════
+function renderNav(){
+  const u=getUser(currentUserId);
+  const links=document.getElementById('navLinks');
+  const actions=document.getElementById('navActions');
+
+  links.innerHTML=`
+    <a class="nav-link" href="qurate.html" target="_blank">
+      <i data-lucide="external-link" style="width:15px;height:15px"></i>Home
+    </a>
+    <button class="nav-link ${currentView==='browse'?'active':''}" onclick="navigate('browse')">
+      <i data-lucide="store" style="width:15px;height:15px"></i>Browse
+    </button>
+    ${u?`<button class="nav-link ${currentView==='dashboard'?'active':''}" onclick="navigate('dashboard')">
+      <i data-lucide="layout-dashboard" style="width:15px;height:15px"></i>My listings
+    </button>`:''}
+  `;
+
+  if(u){
+    actions.innerHTML=`
+      <button class="btn btn-primary btn-sm" onclick="navigate('sell')">
+        <i data-lucide="plus" style="width:15px;height:15px"></i>
+        <span class="hide-mobile">Sell item</span>
+      </button>
+      <div class="dropdown">
+        <div class="avatar" onclick="toggleDropdown(this)" title="${escHtml(u.name)}">${initials(u.name)}</div>
+        <div class="dropdown-menu" id="userDropdown">
+          <div class="dropdown-label">${escHtml(u.name)}<br><span style="font-weight:400;color:var(--ink3)">${getCampusName(u.campusId)} · Verified</span></div>
+          <div class="dropdown-sep"></div>
+          <button class="dropdown-item" onclick="navigate('profile',{userId:'${u.id}'}); closeDD()"><i data-lucide="user" style="width:14px;height:14px"></i>My profile</button>
+          <button class="dropdown-item" onclick="navigate('dashboard'); closeDD()"><i data-lucide="layout-dashboard" style="width:14px;height:14px"></i>My listings</button>
+          <div class="dropdown-sep"></div>
+          <button class="dropdown-item" onclick="logout()"><i data-lucide="log-out" style="width:14px;height:14px"></i>Log out</button>
+        </div>
+      </div>
+    `;
+  } else {
+    actions.innerHTML=`
+      <button class="btn btn-ghost btn-sm" onclick="navigate('login')">Log in</button>
+      <button class="btn btn-primary btn-sm" onclick="navigate('signup')">Join free</button>
+    `;
+  }
+  lucide.createIcons();
+}
+function toggleDropdown(el){document.getElementById('userDropdown')?.classList.toggle('open')}
+function closeDD(){document.getElementById('userDropdown')?.classList.remove('open')}
+document.addEventListener('click',e=>{if(!e.target.closest('.dropdown'))closeDD()});
+
+// ══════════════════════════════════════════
+// HOME VIEW — minimal with browser preview
+// ══════════════════════════════════════════
+function viewHome(){
+  const u = getUser(currentUserId);
+  const previewItems = u ? campusListings().slice(0,6) : listings.slice(0,6);
+  const campusLabel = u ? getCampusName(u.campusId) + ' campus' : 'Your campus';
+
+  return`
+  <main class="page-view">
+    <!-- Hero -->
+    <section class="container" style="padding-top:3.5rem;padding-bottom:2.25rem;text-align:center">
+      <span class="badge badge-primary" style="margin-bottom:1rem;display:inline-flex">
+        <i data-lucide="badge-check" style="width:12px;height:12px"></i>
+        Verified student marketplace
+      </span>
+      <h1 style="font-size:clamp(1.75rem,4.5vw,2.85rem);font-weight:700;letter-spacing:-.03em;color:var(--navy);margin-bottom:.75rem;line-height:1.18">
+        The campus marketplace<br>students actually trust
+      </h1>
+      <p style="color:var(--ink3);font-size:.95rem;max-width:400px;margin:0 auto 1.75rem;line-height:1.72">
+        AI-verified listings. Meet up on campus. No shipping, no strangers.
+      </p>
+      <div class="flex gap-2 justify-center" style="flex-wrap:wrap">
+        <button class="btn btn-primary btn-lg" onclick="navigate('browse')">
+          Browse items <i data-lucide="arrow-right" style="width:16px;height:16px"></i>
+        </button>
+        <button class="btn btn-outline btn-lg" onclick="navigate(currentUserId?'sell':'signup')">
+          Sell something
+        </button>
+      </div>
+    </section>
+
+    <!-- Browser window preview -->
+    <section class="container" style="padding-bottom:3rem">
+      <div class="browser-window">
+        <!-- Chrome bar -->
+        <div class="browser-chrome">
+          <div class="browser-dots">
+            <span class="browser-dot browser-dot-r"></span>
+            <span class="browser-dot browser-dot-y"></span>
+            <span class="browser-dot browser-dot-g"></span>
+          </div>
+          <div class="browser-address">
+            <i data-lucide="lock" style="width:11px;height:11px;color:#15803d;flex-shrink:0"></i>
+            qurate.campus&nbsp;/&nbsp;browse
+          </div>
+          <div style="margin-left:auto;flex-shrink:0">
+            <span class="badge badge-green" style="font-size:.7rem">
+              <i data-lucide="map-pin" style="width:10px;height:10px"></i>
+              ${campusLabel}
+            </span>
+          </div>
+        </div>
+        <!-- Body -->
+        <div class="browser-body">
+          <div style="padding:1.1rem 1.1rem .5rem">
+            <div class="flex items-center justify-between" style="margin-bottom:.85rem">
+              <p style="font-size:.82rem;font-weight:600;color:var(--navy)">${previewItems.length} items available</p>
+              <span class="badge badge-secondary" style="font-size:.7rem">All categories</span>
+            </div>
+            <div class="listing-grid" style="grid-template-columns:repeat(auto-fill,minmax(175px,1fr))">
+              ${previewItems.length ? previewItems.map(l=>listingCard(l)).join('') : `
+                <div style="grid-column:1/-1;padding:3rem 1rem;text-align:center;color:var(--ink3)">
+                  <i data-lucide="package-open" style="width:36px;height:36px;opacity:.3;margin:0 auto .75rem;display:block"></i>
+                  <p class="text-sm">No items yet — be the first to sell!</p>
+                </div>`}
+            </div>
+          </div>
+          <!-- Fade + CTA for logged-out -->
+          ${!currentUserId ? `
+          <div class="browser-fade">
+            <button class="btn btn-primary" onclick="navigate('login')" style="box-shadow:0 4px 16px rgba(18,82,163,.25)">
+              <i data-lucide="log-in" style="width:15px;height:15px"></i>
+              Log in to browse
+            </button>
+          </div>` : ''}
+        </div>
+      </div>
+    </section>
+
+    <!-- Trust strip -->
+    <section style="border-top:1px solid var(--border);background:#f8fbff">
+      <div class="container" style="padding:1.35rem 1.25rem">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1.1rem">
+          ${[
+            ['scan-line','AI quality checked','Every photo is analysed before listing goes live.'],
+            ['badge-check','Verified students only','Your .edu email means only real campus peers.'],
+            ['map-pin','Campus meetup only','No shipping, no strangers — meet in person.'],
+          ].map(([icon,title,desc])=>`
+            <div class="flex items-center gap-3">
+              <div class="value-icon"><i data-lucide="${icon}" style="width:17px;height:17px"></i></div>
+              <div>
+                <p style="font-size:.82rem;font-weight:600;color:var(--navy)">${title}</p>
+                <p style="font-size:.75rem;color:var(--ink3);margin-top:.15rem;line-height:1.5">${desc}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+
+    <footer style="border-top:1px solid var(--border)">
+      <div class="container flex justify-between items-center" style="padding-top:1.1rem;padding-bottom:1.1rem;font-size:.8rem;color:var(--ink3);flex-wrap:wrap;gap:.5rem">
+        <span>© 2026 Qurate — campus marketplace</span>
+        <span>Built for students, by students.</span>
+      </div>
+    </footer>
+  </main>`;
+}
+
+// ══════════════════════════════════════════
+// BROWSE
+// ══════════════════════════════════════════
+function viewBrowse(){
+  if(!currentUserId)return viewAuthGate('Log in to browse listings from your campus.','browse');
+  const u=getUser(currentUserId);
+  let items=campusListings();
+  if(browseQuery.trim()){const q=browseQuery.toLowerCase();items=items.filter(l=>l.title.toLowerCase().includes(q)||l.description.toLowerCase().includes(q))}
+  if(browseCategory!=='all')items=items.filter(l=>l.category===browseCategory);
+  items=[...items].sort((a,b)=>{
+    if(browseSort==='price-low')return a.price-b.price;
+    if(browseSort==='price-high')return b.price-a.price;
+    if(browseSort==='quality')return b.aiCheck.score-a.aiCheck.score;
+    return b.createdAt.localeCompare(a.createdAt);
+  });
+  return`
+  <main class="page-view">
+    <div class="container" style="padding-top:2rem;padding-bottom:3rem">
+      <div class="page-header">
+        <div class="flex items-center gap-1 text-sm" style="margin-bottom:.3rem;color:var(--blue)">
+          <i data-lucide="map-pin" style="width:14px;height:14px"></i>
+          <span style="font-weight:600">${getCampusName(u.campusId)} campus</span>
+        </div>
+        <h1 class="page-title">Browse the marketplace</h1>
+        <p class="page-sub">Items listed by verified students at your college. Meet-up only.</p>
+      </div>
+      <div class="filter-row">
+        <div class="search-wrap">
+          <span class="search-icon"><i data-lucide="search" style="width:16px;height:16px"></i></span>
+          <input class="input" placeholder="Search textbooks, electronics, furniture..." value="${escHtml(browseQuery)}" oninput="browseQuery=this.value;reRender()"/>
+        </div>
+        <select class="select" style="width:160px" onchange="browseCategory=this.value;reRender()">
+          <option value="all" ${browseCategory==='all'?'selected':''}>All categories</option>
+          ${categories.map(c=>`<option value="${c}" ${browseCategory===c?'selected':''}>${c}</option>`).join('')}
+        </select>
+        <select class="select" style="width:170px" onchange="browseSort=this.value;reRender()">
+          <option value="recent" ${browseSort==='recent'?'selected':''}>Most recent</option>
+          <option value="price-low" ${browseSort==='price-low'?'selected':''}>Price: low → high</option>
+          <option value="price-high" ${browseSort==='price-high'?'selected':''}>Price: high → low</option>
+          <option value="quality" ${browseSort==='quality'?'selected':''}>Highest AI score</option>
+        </select>
+      </div>
+      <p class="text-sm text-muted mb-3">${items.length} ${items.length===1?'item':'items'} available</p>
+      ${items.length>0?`<div class="listing-grid">${items.map(l=>listingCard(l)).join('')}</div>`:`
+        <div class="empty">
+          <i data-lucide="search-x" style="width:40px;height:40px;opacity:.3"></i>
+          <p style="font-weight:600;margin-top:.75rem">No items match your search</p>
+          <p>Try a different category or clear your filters.</p>
+        </div>
+      `}
+    </div>
+  </main>`;
+}
+function listingCard(l){
+  const tone=qualityTone(l.aiCheck.score);
+  return`<div class="listing-card" onclick="navigate('listing',{id:'${l.id}'})">
+    <img class="listing-img" src="${l.images[0]}" alt="${escHtml(l.title)}" loading="lazy"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+    <div class="listing-img-placeholder" style="display:none">📦</div>
+    <div class="listing-body">
+      ${l.status!=='available'?`<div style="margin-bottom:.35rem">${statusBadge(l.status)}</div>`:''}
+      <div class="listing-title">${escHtml(l.title)}</div>
+      <div class="listing-price">$${l.price}</div>
+      <div class="flex items-center gap-1 mt-1" style="flex-wrap:wrap">
+        <span class="badge ${tone.cls}" style="font-size:.68rem">${l.aiCheck.score}/100</span>
+        <span class="badge badge-secondary">${l.condition}</span>
+      </div>
+      <div class="listing-meta">${l.category}</div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+// LISTING DETAIL
+// ══════════════════════════════════════════
+function viewListing(){
+  if(!currentUserId)return viewAuthGate('Log in to view this listing and contact the seller.','listing');
+  const l=getListing(currentParams.id);
+  if(!l)return`<div class="container" style="padding:4rem 1rem;text-align:center"><h1>Listing not found</h1><button class="btn btn-outline mt-3" onclick="navigate('browse')">Back to browse</button></div>`;
+  const seller=getUser(l.sellerId);
+  const isOwner=currentUserId===l.sellerId;
+  const interested=hasInterest(l.id);
+  const tone=qualityTone(l.aiCheck.score);
+  const ai=l.aiCheck;
+  return`
+  <main class="page-view">
+    <div class="container" style="padding-top:1.5rem;padding-bottom:3rem">
+      <button class="back-btn" onclick="navigate('browse')"><i data-lucide="arrow-left" style="width:16px;height:16px"></i>Back to browse</button>
+      <div class="detail-grid">
+        <div>
+          <img class="detail-img" src="${l.images[0]}" alt="${escHtml(l.title)}"
+            onerror="this.style.background='var(--secondary)';this.style.minHeight='300px'"/>
+        </div>
+        <div class="flex flex-col gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="badge badge-secondary">${l.category}</span>
+              ${l.status!=='available'?statusBadge(l.status):''}
+            </div>
+            <h1 style="font-size:1.5rem;font-weight:700;letter-spacing:-.02em;line-height:1.3;color:var(--navy)">${escHtml(l.title)}</h1>
+            <p class="detail-price mt-1">$${l.price}</p>
+          </div>
+          <div class="flex items-center gap-3 text-sm text-muted" style="flex-wrap:wrap">
+            <span class="flex items-center gap-1"><i data-lucide="map-pin" style="width:14px;height:14px"></i>${getCampusName(l.campusId)} · meet-up only</span>
+            <span class="flex items-center gap-1"><i data-lucide="calendar-days" style="width:14px;height:14px"></i>Listed ${fmtDate(l.createdAt)}</span>
+          </div>
+          <p class="text-sm" style="line-height:1.75;color:var(--ink2)">${escHtml(l.description)}</p>
+          <!-- AI Panel -->
+          <div class="ai-panel">
+            <div class="ai-header">
+              <div class="flex items-center gap-2">
+                <div class="value-icon" style="width:34px;height:34px"><i data-lucide="shield-check" style="width:17px;height:17px"></i></div>
+                <div>
+                  <p style="font-size:.875rem;font-weight:600;color:var(--navy)">AI Quality Check</p>
+                  <p class="text-xs text-muted">${tone.label}</p>
+                </div>
+              </div>
+              <div style="text-align:right">
+                <p class="ai-score">${ai.score}</p>
+                <p class="text-xs text-muted">/ 100</p>
+              </div>
+            </div>
+            <div class="progress"><div class="progress-fill" style="width:${ai.score}%"></div></div>
+            <p class="text-sm text-muted mt-2">${ai.summary}</p>
+            ${ai.highlights.length?`<ul style="margin-top:.75rem;display:flex;flex-direction:column;gap:.35rem">${ai.highlights.map(h=>`<li class="flex items-center gap-2 text-sm"><i data-lucide="check" style="width:14px;height:14px;color:var(--blue)"></i>${h}</li>`).join('')}</ul>`:''}
+            ${ai.flags.length?`<ul style="margin-top:.4rem;display:flex;flex-direction:column;gap:.35rem">${ai.flags.map(f=>`<li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="alert-triangle" style="width:14px;height:14px;color:#ca8a04"></i>${f}</li>`).join('')}</ul>`:''}
+          </div>
+          <!-- Seller -->
+          ${seller?`
+          <div class="seller-card" onclick="navigate('profile',{userId:'${seller.id}'})">
+            <div class="avatar avatar-lg">${initials(seller.name)}</div>
+            <div style="flex:1">
+              <p style="font-size:.9rem;font-weight:600;color:var(--navy)">${escHtml(seller.name)}</p>
+              <div class="flex items-center gap-2 mt-1">
+                <div class="stars">${stars(seller.rating)}</div>
+                <span class="text-xs text-muted">${seller.rating||'New'} · ${seller.reviewCount} reviews</span>
+              </div>
+            </div>
+            <span class="badge badge-primary"><i data-lucide="shield-check" style="width:11px;height:11px"></i>Verified</span>
+          </div>`:''}
+          <div class="sep"></div>
+          <!-- Action -->
+          ${isOwner?`
+            <div style="background:var(--secondary);border-radius:var(--r-sm);padding:.75rem;font-size:.875rem;color:var(--ink3)">
+              This is your listing. <button style="background:none;border:none;cursor:pointer;font-weight:600;color:var(--blue)" onclick="navigate('dashboard')">Manage in dashboard →</button>
+            </div>
+          `:interested?`
+            <button class="btn btn-outline btn-lg w-full" disabled>
+              <i data-lucide="check" style="width:17px;height:17px"></i>Interest sent
+            </button>
+          `:l.status==='available'?`
+            <button class="btn btn-primary btn-lg w-full" onclick="showInterestDialog('${l.id}')">
+              <i data-lucide="send" style="width:17px;height:17px"></i>I'm interested
+            </button>
+          `:`
+            <button class="btn btn-outline btn-lg w-full" disabled>No longer available</button>
+          `}
+          <p class="text-xs text-muted text-center">Qurate keeps your details private until both sides agree to meet on campus.</p>
+        </div>
+      </div>
+    </div>
+  </main>`;
+}
+
+let interestNote='',interestListingId='';
+function showInterestDialog(lid){
+  interestListingId=lid;interestNote='';
+  showDialog(`
+    <h3>Express interest</h3>
+    <p>Your identity stays private. The seller only sees that someone is interested — your name and contact are revealed only after they choose to connect with you.</p>
+    <textarea class="textarea" placeholder="Add a note for the seller (e.g. when you can meet, an offer)..." rows="4" oninput="interestNote=this.value"></textarea>
+    <div class="flex gap-2 mt-3" style="justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeOverlay()">Cancel</button>
+      <button class="btn btn-primary" onclick="submitInterest()"><i data-lucide="send" style="width:15px;height:15px"></i>Send interest</button>
+    </div>
+  `);
+}
+function submitInterest(){
+  if(!currentUserId)return;
+  if(!interests.some(i=>i.listingId===interestListingId&&i.buyerId===currentUserId)){
+    interests.push({id:genId('i'),listingId:interestListingId,buyerId:currentUserId,note:interestNote.trim()||"I'm interested in this item.",createdAt:new Date().toISOString().slice(0,10),unlocked:false});
+  }
+  closeOverlay();toast('Interest sent! The seller will be notified.');reRender();
+}
+
+// ══════════════════════════════════════════
+// SELL
+// ══════════════════════════════════════════
+function viewSell(){
+  if(!currentUserId)return viewAuthGate('Log in to list an item for sale on your campus.','sell');
+  return`
+  <main class="page-view">
+    <div class="container" style="max-width:680px;padding-top:2rem;padding-bottom:3rem">
+      <div class="page-header">
+        <h1 class="page-title">List an item</h1>
+        <p class="page-sub">Add photos, fill in details, and our AI will check the condition automatically.</p>
+      </div>
+      <!-- Photos -->
+      <div class="form-group">
+        <label class="label">Photos (up to 4)</label>
+        <div class="upload-area" onclick="${sellScanning?'':' addSamplePhoto()'}" style="${sellScanning?'cursor:not-allowed;opacity:.6':''}">
+          <i data-lucide="image-plus" style="width:30px;height:30px;color:var(--ink3);margin-bottom:.5rem;display:block;margin-left:auto;margin-right:auto"></i>
+          <p style="font-size:.875rem;font-weight:600;color:var(--ink3)">${sellScanning?'Scan in progress…':'Click to add a sample photo'}</p>
+          <p style="font-size:.75rem;color:var(--ink3);margin-top:.2rem">${sellScanning?'Please wait for the scan to complete':'Real photo uploads go here in the live app'}</p>
+        </div>
+        ${sellImages.length?`<div class="image-grid">${sellImages.map((img,i)=>`
+          <div class="image-thumb">
+            <img src="${img}" alt="Photo ${i+1}"/>
+            ${sellScanning?'':`<button class="remove-btn" onclick="removeSellPhoto(${i})">×</button>`}
+          </div>`).join('')}</div>`:''}
+      </div>
+      <!-- Details -->
+      <div class="form-group">
+        <label class="label">Title *</label>
+        <input class="input" placeholder="e.g. Calculus textbook, 8th edition" value="${escHtml(sellTitle)}" oninput="sellTitle=this.value" ${sellScanning?'disabled':''}/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="label">Category *</label>
+          <select class="select" onchange="sellCategory=this.value" ${sellScanning?'disabled':''}>
+            <option value="">Select category</option>
+            ${categories.map(c=>`<option value="${c}" ${sellCategory===c?'selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="label">Price ($) *</label>
+          <input class="input" type="number" min="0" step="0.50" placeholder="0.00" value="${sellPrice}" oninput="sellPrice=this.value" ${sellScanning?'disabled':''}/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="label">Description</label>
+        <textarea class="textarea" rows="3" placeholder="Describe the item's condition, what's included, any defects..." oninput="sellDesc=this.value" ${sellScanning?'disabled':''}>${escHtml(sellDesc)}</textarea>
+      </div>
+      <!-- AI Check zone -->
+      <div class="form-group">
+        <div id="aiCheckZone">
+          ${sellAiCheck?`
+            <div class="ai-panel">
+              <div class="ai-header">
+                <div class="flex items-center gap-2">
+                  <div class="value-icon" style="width:34px;height:34px"><i data-lucide="shield-check" style="width:17px;height:17px"></i></div>
+                  <div>
+                    <p style="font-size:.875rem;font-weight:600;color:var(--navy)">AI Quality Check — Complete</p>
+                    <p class="text-xs text-muted">${qualityTone(sellAiCheck.score).label}</p>
+                  </div>
+                </div>
+                <p class="ai-score">${sellAiCheck.score}<span style="font-size:.85rem;font-weight:400;color:var(--ink3)">/100</span></p>
+              </div>
+              <div class="progress"><div class="progress-fill" style="width:${sellAiCheck.score}%"></div></div>
+              <p class="text-sm text-muted mt-2">${sellAiCheck.summary}</p>
+              ${sellAiCheck.highlights.length?`<ul style="margin-top:.75rem;display:flex;flex-direction:column;gap:.3rem">${sellAiCheck.highlights.map(h=>`<li class="flex items-center gap-2 text-sm"><i data-lucide="check" style="width:13px;height:13px;color:var(--blue)"></i>${h}</li>`).join('')}</ul>`:''}
+              ${sellAiCheck.flags.length?`<ul style="margin-top:.3rem;display:flex;flex-direction:column;gap:.3rem">${sellAiCheck.flags.map(f=>`<li class="flex items-center gap-2 text-sm text-muted"><i data-lucide="alert-triangle" style="width:13px;height:13px;color:#ca8a04"></i>${f}</li>`).join('')}</ul>`:''}
+              <button class="btn btn-outline btn-sm mt-3" onclick="sellAiCheck=null;reRender()">Re-scan photos</button>
+            </div>
+          `:`
+            <button class="btn btn-outline w-full" style="padding:.75rem" onclick="startAiScan()" ${(sellImages.length===0||sellScanning)?'disabled':''}>
+              <i data-lucide="sparkles" style="width:16px;height:16px;color:var(--blue)"></i>
+              Run AI quality check
+            </button>
+            ${sellImages.length===0?`<p class="text-xs text-muted mt-1 text-center">Add at least one photo to enable the AI check</p>`:''}
+          `}
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="flex gap-2" style="justify-content:flex-end">
+        <button class="btn btn-outline" onclick="navigate('browse')">Cancel</button>
+        <button class="btn btn-primary" onclick="publishListing()"
+          ${(!sellTitle.trim()||!sellPrice||!sellCategory||!sellAiCheck||sellScanning)?'disabled':''}>
+          <i data-lucide="check" style="width:16px;height:16px"></i>Publish listing
+        </button>
+      </div>
+    </div>
+  </main>`;
+}
+
+function addSamplePhoto(){
+  if(sellScanning)return;
+  if(sellImages.length>=4){toast('Maximum 4 photos allowed','error');return}
+  const remaining=samplePhotos.filter(p=>!sellImages.includes(p));
+  if(!remaining.length)return;
+  sellImages=[...sellImages,remaining[0]];
+  sellAiCheck=null;
+  reRender();
+}
+function removeSellPhoto(i){
+  if(sellScanning)return;
+  sellImages=sellImages.filter((_,idx)=>idx!==i);
+  sellAiCheck=null;
+  reRender();
+}
+
+// ── AI SCAN — 5 second delay, then done ──
+function startAiScan(){
+  if(sellImages.length===0){toast('Add at least one photo first','error');return}
+  if(sellScanning)return;
+
+  sellScanning=true;
+
+  const zone=document.getElementById('aiCheckZone');
+  if(!zone)return;
+
+  zone.innerHTML=`
+    <div class="ai-panel" style="padding:1.25rem">
+      <div class="flex items-center gap-3">
+        <div class="value-icon" style="width:36px;height:36px;flex-shrink:0">
+          <i data-lucide="scan-line" style="width:18px;height:18px;animation:spin 1.5s linear infinite"></i>
+        </div>
+        <div>
+          <p style="font-weight:600;color:var(--navy);font-size:.9rem">Scanning photos…</p>
+          <p class="text-xs text-muted mt-1">This will take a few seconds</p>
+        </div>
+      </div>
+    </div>`;
+  lucide.createIcons();
+
+  setTimeout(()=>{
+    if(!sellScanning)return;
+    sellAiCheck=buildAiCheck(sellImages.length);
+    sellScanning=false;
+    reRender();
+    toast('AI check complete ✓');
+  }, 5000);
+}
+
+function buildAiCheck(imageCount){
+  const base = 72 + Math.min(imageCount, 4) * 5;
+  const score = Math.max(70, Math.min(97, base + Math.floor(Math.random() * 6)));
+  const condition = score>=92?'Like New':score>=84?'Excellent':score>=72?'Good':'Fair';
+  const highlights = ['Clear, well-lit photos','No major scratches detected','Item matches the description'].slice(0, score>=90?3:2);
+  const flags = score>=88?[]:['Consider a close-up of any visible wear'];
+  const summary = score>=90
+    ? 'Photos indicate an item in excellent shape with no notable issues found.'
+    : 'Item looks well-kept with only minor, normal signs of use.';
+  return {score, condition, summary, highlights, flags};
+}
+
+function publishListing(){
+  if(!sellTitle.trim()||!sellPrice||!sellCategory||!sellAiCheck||sellScanning)return;
+  const u=getUser(currentUserId);
+  listings.unshift({
+    id:genId('l'),title:sellTitle.trim(),description:sellDesc.trim(),
+    price:parseFloat(sellPrice),category:sellCategory,condition:sellAiCheck.condition,
+    images:sellImages.length?[...sellImages]:['https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=400&fit=crop'],
+    sellerId:currentUserId,campusId:u.campusId,createdAt:new Date().toISOString().slice(0,10),
+    status:'available',aiCheck:sellAiCheck
+  });
+  resetSell();
+  toast('Listing published! 🎉');
+  navigate('dashboard');
+}
+
+// ══════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════
+let dashTab = 'listings';
+function viewDashboard(){
+  if(!currentUserId)return viewAuthGate('Log in to manage your listings.','dashboard');
+  const u=getUser(currentUserId);
+  const mine=myListings();
+  const totalBuyers=mine.reduce((acc,l)=>acc+interestsForListing(l.id).length,0);
+  const earned=mine.filter(l=>l.status==='sold').reduce((s,l)=>s+l.price,0);
+  return`
+  <main class="page-view">
+    <div class="container" style="padding-top:2rem;padding-bottom:3rem">
+      <div class="page-header">
+        <h1 class="page-title">My listings</h1>
+        <p class="page-sub">${getCampusName(u.campusId)} · ${escHtml(u.name)}</p>
+      </div>
+      <div class="dash-stats">
+        ${[
+          [mine.filter(l=>l.status==='available').length,'Active'],
+          [mine.filter(l=>l.status==='sold').length,'Sold'],
+          ['$'+earned,'Earned'],
+          [totalBuyers,'Total buyers'],
+        ].map(([v,l])=>`<div class="stat-card"><div class="stat-value">${v}</div><div class="stat-label">${l}</div></div>`).join('')}
+      </div>
+      <div class="tabs">
+        <button class="tab ${dashTab==='listings'?'active':''}" onclick="dashTab='listings';reRender()">My listings (${mine.length})</button>
+        <button class="tab ${dashTab==='buyers'?'active':''}" onclick="dashTab='buyers';reRender()">Buyers</button>
+      </div>
+      ${dashTab==='listings'?renderMyListings(mine):renderBuyers(mine)}
+    </div>
+  </main>`;
+}
+function renderMyListings(mine){
+  if(!mine.length)return`<div class="empty">
+    <i data-lucide="package-open" style="width:40px;height:40px;opacity:.3"></i>
+    <p style="font-weight:600;margin-top:.75rem">No listings yet</p>
+    <p>Start selling to your campus!</p>
+    <button class="btn btn-primary mt-3" onclick="navigate('sell')">Create listing</button>
+  </div>`;
+  return`<div style="display:flex;flex-direction:column;gap:.75rem">${mine.map(l=>`
+    <div class="card" style="display:flex;align-items:flex-start;gap:1rem;padding:1rem">
+      <img src="${l.images[0]}" style="width:68px;height:68px;object-fit:cover;border-radius:var(--r-sm);border:1px solid var(--border);flex-shrink:0" loading="lazy" onerror="this.style.display='none'"/>
+      <div style="flex:1;min-width:0">
+        <div class="flex items-center gap-2 mb-1">${statusBadge(l.status)}<span class="badge badge-secondary">${l.category}</span></div>
+        <p style="font-weight:600;font-size:.92rem;color:var(--ink2)" class="truncate">${escHtml(l.title)}</p>
+        <div class="flex items-center gap-3 mt-1 text-sm text-muted flex-wrap">
+          <span>$${l.price}</span>
+          <span>${interestsForListing(l.id).length} interested</span>
+          <span>AI: ${l.aiCheck.score}/100</span>
+        </div>
+      </div>
+      <div class="flex flex-col gap-1" style="flex-shrink:0">
+        ${l.status==='available'?`
+          <button class="btn btn-outline btn-sm" onclick="markStatus('${l.id}','reserved')">Mark reserved</button>
+          <button class="btn btn-outline btn-sm" onclick="markStatus('${l.id}','sold')">Mark sold</button>
+        `:l.status==='reserved'?`
+          <button class="btn btn-outline btn-sm" onclick="markStatus('${l.id}','available')">Relist</button>
+          <button class="btn btn-outline btn-sm" onclick="markStatus('${l.id}','sold')">Mark sold</button>
+        `:`<span class="text-xs text-muted">Sold</span>`}
+        <button class="btn btn-danger btn-sm" onclick="navigate('listing',{id:'${l.id}'})">View</button>
+      </div>
+    </div>
+  `).join('')}</div>`;
+}
+function renderBuyers(mine){
+  const allBuyers=mine.flatMap(l=>interestsForListing(l.id).map(i=>({...i,listing:l})));
+  if(!allBuyers.length)return`<div class="empty">
+    <i data-lucide="users" style="width:40px;height:40px;opacity:.3"></i>
+    <p style="font-weight:600;margin-top:.75rem">No buyers yet</p>
+    <p>Share your listings to attract more interest.</p>
+  </div>`;
+  return`<div style="display:flex;flex-direction:column;gap:.6rem">${allBuyers.map(i=>{
+    const buyer=getUser(i.buyerId);
+    return`<div class="buyer-row">
+      <div class="avatar">${buyer?initials(buyer.name):'?'}</div>
+      <div style="flex:1;min-width:0">
+        ${i.unlocked?`
+          <p style="font-weight:600;font-size:.9rem;color:var(--navy)">${buyer?escHtml(buyer.name):'Unknown'}</p>
+          <p class="text-xs text-muted">${buyer?.phone||buyer?.email||''}</p>
+        `:`
+          <p style="font-weight:600;font-size:.9rem">Anonymous buyer</p>
+          <p class="text-xs text-muted">Unlock to reveal identity &amp; contact</p>
+        `}
+        <p class="text-xs text-muted mt-1" style="background:var(--secondary);padding:.3rem .55rem;border-radius:var(--r-sm);display:inline-block;margin-top:.4rem">"${escHtml(i.note)}"</p>
+        <p class="text-xs text-muted mt-1">Re: ${escHtml(i.listing.title)}</p>
+      </div>
+      ${!i.unlocked?`
+        <button class="btn btn-primary btn-sm" onclick="unlockBuyer('${i.id}')">
+          <i data-lucide="unlock" style="width:13px;height:13px"></i>Unlock ($${UNLOCK_FEE})
+        </button>
+      `:`<span class="badge badge-green"><i data-lucide="check" style="width:11px;height:11px"></i>Unlocked</span>`}
+    </div>`;
+  }).join('')}</div>`;
+}
+function markStatus(lid,status){listings=listings.map(l=>l.id===lid?{...l,status}:l);toast(`Marked as ${status}`);reRender()}
+function unlockBuyer(iid){interests=interests.map(i=>i.id===iid?{...i,unlocked:true}:i);toast('Buyer contact revealed 🔓');reRender()}
+
+// ══════════════════════════════════════════
+// PROFILE
+// ══════════════════════════════════════════
+function viewProfile(){
+  const uid=currentParams.userId||currentUserId;
+  const u=getUser(uid);
+  if(!u)return`<div class="container" style="padding:4rem 1rem;text-align:center"><h1>User not found</h1></div>`;
+  const myRev=reviewsForUser(uid);
+  const userListings=listings.filter(l=>l.sellerId===uid&&l.status==='available');
+  const isSelf=uid===currentUserId;
+  return`
+  <main class="page-view">
+    <div class="container" style="padding-top:2rem;padding-bottom:3rem;max-width:750px">
+      <div class="profile-header">
+        <div class="avatar" style="width:60px;height:60px;font-size:1.1rem;flex-shrink:0">${initials(u.name)}</div>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 style="font-size:1.2rem;font-weight:700;color:var(--navy)">${escHtml(u.name)}</h2>
+            <span class="badge badge-primary"><i data-lucide="shield-check" style="width:11px;height:11px"></i>Verified</span>
+          </div>
+          <div class="flex items-center gap-2 mt-1">
+            <div class="stars">${stars(u.rating)}</div>
+            <span class="text-sm text-muted">${u.rating||'No ratings'} · ${u.reviewCount} reviews</span>
+          </div>
+          <p class="text-sm text-muted mt-1">${getCampusName(u.campusId)} · Joined ${fmtDate(u.joinedAt)}</p>
+          ${u.bio?`<p class="text-sm mt-2">${escHtml(u.bio)}</p>`:''}
+        </div>
+      </div>
+      ${userListings.length?`
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:.75rem;color:var(--navy)">${isSelf?'My':'Active'} listings (${userListings.length})</h3>
+        <div class="listing-grid mb-3">${userListings.map(l=>listingCard(l)).join('')}</div>
+      `:''}
+      ${myRev.length?`
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:.75rem;color:var(--navy)">Reviews (${myRev.length})</h3>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          ${myRev.map(r=>{const from=getUser(r.fromUserId);return`
+            <div class="card card-p">
+              <div class="flex items-center gap-2 mb-1">
+                <div class="avatar" style="width:30px;height:30px;font-size:.7rem">${from?initials(from.name):'?'}</div>
+                <div>
+                  <p style="font-size:.85rem;font-weight:600">${from?escHtml(from.name):'A student'}</p>
+                  <div class="stars">${stars(r.rating)}</div>
+                </div>
+                <span class="text-xs text-muted" style="margin-left:auto">${fmtDate(r.createdAt)}</span>
+              </div>
+              <p class="text-sm" style="line-height:1.65;margin-top:.5rem">${escHtml(r.comment)}</p>
+            </div>
+          `}).join('')}
+        </div>
+      `:`<div class="empty"><i data-lucide="star" style="width:32px;height:32px;opacity:.3"></i><p class="mt-2">No reviews yet</p></div>`}
+    </div>
+  </main>`;
+}
+
+// ══════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════
+let loginEmail='',loginError='';
+function viewLogin(){
+  return`
+  <main class="page-view">
+    <div class="container" style="display:flex;justify-content:center;padding-top:4rem;padding-bottom:4rem">
+      <div style="max-width:400px;width:100%">
+        <div style="text-align:center;margin-bottom:2rem">
+          <div style="width:48px;height:48px;background:#dbeeff;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem">
+            <i data-lucide="store" style="width:22px;height:22px;color:var(--blue)"></i>
+          </div>
+          <h2 style="font-size:1.45rem;font-weight:700;color:var(--navy)">Welcome back</h2>
+          <p class="text-muted text-sm mt-1">Log in with your student email</p>
+        </div>
+        <div class="card card-p">
+          ${loginError?`<div style="background:#fee2e2;color:#dc2626;padding:.65rem .85rem;border-radius:var(--r-sm);font-size:.85rem;margin-bottom:1rem">${loginError}</div>`:''}
+          <div class="form-group">
+            <label class="label">Email address</label>
+            <input class="input" type="email" placeholder="yourname@university.edu"
+              value="${escHtml(loginEmail)}" oninput="loginEmail=this.value"
+              onkeydown="if(event.key==='Enter')doLogin()"/>
+          </div>
+          <button class="btn btn-primary w-full" style="padding:.65rem" onclick="doLogin()">Log in</button>
+          <div class="divider">or try a demo account</div>
+          <div style="display:flex;flex-direction:column;gap:.35rem">
+            ${users.slice(0,3).map(u=>`
+              <button class="btn btn-outline btn-sm" style="justify-content:flex-start;gap:.6rem" onclick="quickLogin('${u.email}')">
+                <div class="avatar" style="width:24px;height:24px;font-size:.6rem;border:none">${initials(u.name)}</div>
+                ${escHtml(u.name)} <span class="text-xs text-muted">${getCampusName(u.campusId)}</span>
+              </button>`).join('')}
+          </div>
+        </div>
+        <p class="text-center text-sm text-muted mt-3">Don't have an account? <button style="background:none;border:none;cursor:pointer;font-weight:600;color:var(--blue)" onclick="navigate('signup')">Sign up</button></p>
+      </div>
+    </div>
+  </main>`;
+}
+function doLogin(){
+  const found=users.find(u=>u.email.toLowerCase()===loginEmail.toLowerCase());
+  if(found){
+    currentUserId=found.id;loginEmail='';loginError='';
+    toast('Welcome back, '+found.name+'!');
+    navigate('browse');
+  } else {
+    loginError='No account found with that email. Try a demo account below.';
+    reRender();
+  }
+}
+function quickLogin(email){loginEmail=email;doLogin()}
+
+// ══════════════════════════════════════════
+// SIGNUP
+// ══════════════════════════════════════════
+let signupName='',signupEmail='',signupCampus='c1',signupError='';
+function viewSignup(){
+  return`
+  <main class="page-view">
+    <div class="container" style="display:flex;justify-content:center;padding-top:4rem;padding-bottom:4rem">
+      <div style="max-width:420px;width:100%">
+        <div style="text-align:center;margin-bottom:2rem">
+          <div style="width:48px;height:48px;background:#dbeeff;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem">
+            <i data-lucide="user-plus" style="width:22px;height:22px;color:var(--blue)"></i>
+          </div>
+          <h2 style="font-size:1.45rem;font-weight:700;color:var(--navy)">Join Qurate</h2>
+          <p class="text-muted text-sm mt-1">Create your verified student account</p>
+        </div>
+        <div class="card card-p">
+          ${signupError?`<div style="background:#fee2e2;color:#dc2626;padding:.65rem .85rem;border-radius:var(--r-sm);font-size:.85rem;margin-bottom:1rem">${signupError}</div>`:''}
+          <div class="form-group">
+            <label class="label">Full name</label>
+            <input class="input" placeholder="Your name" value="${escHtml(signupName)}" oninput="signupName=this.value"/>
+          </div>
+          <div class="form-group">
+            <label class="label">University email</label>
+            <input class="input" type="email" placeholder="yourname@university.edu" value="${escHtml(signupEmail)}" oninput="signupEmail=this.value"/>
+          </div>
+          <div class="form-group">
+            <label class="label">Your campus</label>
+            <select class="select" onchange="signupCampus=this.value">
+              ${campuses.map(c=>`<option value="${c.id}" ${signupCampus===c.id?'selected':''}>${c.name}</option>`).join('')}
+            </select>
+          </div>
+          <button class="btn btn-primary w-full" style="padding:.65rem" onclick="doSignup()">Create account</button>
+        </div>
+        <p class="text-center text-sm text-muted mt-3">Already have an account? <button style="background:none;border:none;cursor:pointer;font-weight:600;color:var(--blue)" onclick="navigate('login')">Log in</button></p>
+      </div>
+    </div>
+  </main>`;
+}
+function doSignup(){
+  if(!signupName.trim()){signupError='Please enter your name.';reRender();return}
+  if(!signupEmail.includes('@')){signupError='Please enter a valid email address.';reRender();return}
+  if(users.find(u=>u.email.toLowerCase()===signupEmail.toLowerCase())){signupError='An account with that email already exists.';reRender();return}
+  const id=genId('u');
+  const name=signupName.trim();
+  users.push({id,name,email:signupEmail,phone:'+00 0000 0000',campusId:signupCampus,bio:'New to Qurate.',rating:0,reviewCount:0,joinedAt:new Date().toISOString().slice(0,10)});
+  currentUserId=id;signupName='';signupEmail='';signupError='';
+  toast('Welcome to Qurate, '+name+'! 🎉');
+  navigate('browse');
+}
+
+// ══════════════════════════════════════════
+// AUTH GATE
+// ══════════════════════════════════════════
+function viewAuthGate(msg,returnTo){
+  return`
+  <main class="page-view">
+    <div class="container" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6rem 1rem;text-align:center">
+      <div class="value-icon" style="width:50px;height:50px;margin-bottom:1rem">
+        <i data-lucide="lock" style="width:22px;height:22px"></i>
+      </div>
+      <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:.5rem;color:var(--navy)">Sign in required</h2>
+      <p class="text-muted text-sm" style="max-width:300px;line-height:1.65;margin-bottom:1.5rem">${msg}</p>
+      <div class="flex gap-2">
+        <button class="btn btn-primary" onclick="navigate('login')">Log in</button>
+        <button class="btn btn-outline" onclick="navigate('signup')">Join free</button>
+      </div>
+    </div>
+  </main>`;
+}
+
+// ══════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════
+function logout(){
+  currentUserId=null;
+  resetSell();
+  browseQuery='';browseCategory='all';browseSort='recent';
+  dashTab='listings';
+  toast('Logged out.');
+  navigate('home');
+}
+
+// ══════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════
+function reRender(){render()}
+function render(){
+  const app=document.getElementById('app');
+  let html='';
+  if(currentView==='home')         html=viewHome();
+  else if(currentView==='browse')  html=viewBrowse();
+  else if(currentView==='listing') html=viewListing();
+  else if(currentView==='sell')    html=viewSell();
+  else if(currentView==='dashboard')html=viewDashboard();
+  else if(currentView==='profile') html=viewProfile();
+  else if(currentView==='login')   html=viewLogin();
+  else if(currentView==='signup')  html=viewSignup();
+  else                             html=viewHome();
+  app.innerHTML=html;
+  renderNav();
+  lucide.createIcons();
+}
+if(typeof lucide !== 'undefined') {
+  render();
+} else {
+  document.querySelector('script[src*="lucide"]').addEventListener('load', render);
+}
+</script>
+</body>
+</html>

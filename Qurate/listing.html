@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listing — Qurate</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <div class="nav-inner">
+        <a class="logo" href="dashboard.html">
+          <img class="logo-img" src="../items/logo.jpeg" alt="Qurate logo" onerror="this.style.display='none'"/>
+        </a>
+        <div class="nav-actions">
+          <a class="btn btn-outline btn-sm" href="dashboard.html">← Back</a>
+          <button class="btn btn-outline btn-sm" id="logoutBtn">Log out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="max-width:860px;padding-top:2rem;padding-bottom:3rem;">
+
+    <div id="loadingState" style="padding:4rem 0;text-align:center;color:var(--ink3,#666);">Loading listing…</div>
+    <div id="listingContent" style="display:none;">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start;">
+
+        <!-- Left: image gallery -->
+        <div>
+          <div style="position:relative;border-radius:16px;overflow:hidden;background:#f0f4ff;">
+            <img id="mainImage" src="" alt="Listing image"
+              style="width:100%;display:block;object-fit:contain;">
+            <!-- Prev / Next -->
+            <button id="prevBtn" onclick="shiftImage(-1)"
+              style="display:none;position:absolute;left:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;">‹</button>
+            <button id="nextBtn" onclick="shiftImage(1)"
+              style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;">›</button>
+          </div>
+          <!-- Thumbnails -->
+          <div id="thumbRow" style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;"></div>
+        </div>
+
+        <!-- Right: details -->
+        <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+          <div>
+            <div id="listingCategory" style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#1252a3;margin-bottom:0.4rem;"></div>
+            <h1 id="listingTitle" style="font-size:1.75rem;font-weight:800;color:#072050;margin:0 0 0.5rem;letter-spacing:-0.02em;"></h1>
+            <div id="listingPrice" style="font-size:1.5rem;font-weight:700;color:#0b3a79;"></div>
+          </div>
+
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+            <span id="listingStatus" class="badge"></span>
+            <span id="listingAiScore" class="badge" style="background:#e8f0fe;color:#1252a3;display:none;"></span>
+            <span id="listingSchool" class="badge" style="background:#f0f4ff;color:#1252a3;"></span>
+          </div>
+
+          <div>
+            <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#1252a3;margin-bottom:0.4rem;">Description</div>
+            <p id="listingDesc" style="color:#2a2a2a;line-height:1.65;margin:0;font-size:0.95rem;"></p>
+          </div>
+
+          <div id="listingMeta" style="font-size:0.8rem;color:#888;"></div>
+
+          <!-- Interest section -->
+          <div id="interestSection">
+            <button id="showInterestBtn" class="btn btn-primary" style="width:100%;">Show Interest</button>
+            <div id="messageBox" style="display:none;margin-top:1rem;">
+              <textarea id="messageInput" class="textarea"
+                placeholder="Write a message to the seller — introduce yourself, ask questions, propose a meetup…"
+                style="width:100%;box-sizing:border-box;margin-bottom:0.75rem;"></textarea>
+              <div style="display:flex;gap:0.75rem;justify-content:flex-end;">
+                <button class="btn btn-outline" onclick="cancelInterest()">Cancel</button>
+                <button class="btn btn-primary" id="sendInterestBtn" onclick="submitInterest()">Send Message</button>
+              </div>
+            </div>
+            <div id="interestSent" style="display:none;padding:1rem;background:#e8f4ee;border-radius:12px;color:#0a6632;font-weight:600;text-align:center;">
+              ✓ Message sent to seller
+            </div>
+            <div id="ownListingNote" style="display:none;padding:1rem;background:#f0f4ff;border-radius:12px;color:#1252a3;text-align:center;font-size:0.9rem;">
+              This is your listing
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="errorState" style="display:none;padding:4rem 0;text-align:center;color:#b91c1c;">Listing not found.</div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="supabaseClient.js"></script>
+  <script>
+    let currentUser = null;
+    let listing     = null;
+    let imageIndex  = 0;
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await sbClient.auth.signOut();
+      window.location.href = "auth.html";
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      currentUser = await checkUserSession();
+      if (!currentUser) return;
+
+      const params = new URLSearchParams(window.location.search);
+      const id     = params.get('id');
+      if (!id) { showError(); return; }
+
+      const { data, error } = await sbClient
+        .from('listings')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error || !data) { showError(); return; }
+      listing = data;
+      renderListing();
+      lucide.createIcons();
+    });
+
+    function renderListing() {
+      document.getElementById('loadingState').style.display  = 'none';
+      document.getElementById('listingContent').style.display = 'block';
+
+      document.getElementById('listingTitle').textContent    = listing.title;
+      document.getElementById('listingCategory').textContent = listing.category || '';
+      document.getElementById('listingPrice').textContent    = `₹${listing.price}`;
+      document.getElementById('listingDesc').textContent     = listing.description || 'No description provided.';
+      document.getElementById('listingMeta').textContent     = `Listed ${new Date(listing.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}`;
+
+      const statusEl = document.getElementById('listingStatus');
+      statusEl.textContent  = listing.status;
+      statusEl.className    = `badge ${listing.status === 'available' ? 'badge-green' : 'badge-red'}`;
+
+      if (listing.ai_score != null) {
+        const aiEl = document.getElementById('listingAiScore');
+        aiEl.textContent    = `AI Score ${listing.ai_score}/100`;
+        aiEl.style.display  = 'inline-block';
+      }
+
+      const school = listing.school || '';
+      document.getElementById('listingSchool').textContent = school.charAt(0).toUpperCase() + school.slice(1);
+
+      // Images
+      const images = listing.images?.length ? listing.images : ['placeholder.jpg'];
+      imageIndex = 0;
+      setMainImage(images);
+
+      const thumbRow = document.getElementById('thumbRow');
+      if (images.length > 1) {
+        thumbRow.innerHTML = images.map((src, i) => `
+          <img src="${src}" onclick="jumpImage(${i})"
+            style="width:64px;height:64px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid ${i === 0 ? '#0b3a79' : '#cde'};"
+            id="thumb-${i}">`
+        ).join('');
+        document.getElementById('prevBtn').style.display = 'flex';
+        document.getElementById('nextBtn').style.display = 'flex';
+      }
+
+      // Own listing check
+      if (listing.seller_id === currentUser.id) {
+        document.getElementById('showInterestBtn').style.display = 'none';
+        document.getElementById('ownListingNote').style.display  = 'block';
+      }
+    }
+
+    function setMainImage(images) {
+      document.getElementById('mainImage').src = images[imageIndex];
+    }
+
+    function shiftImage(dir) {
+      const images = listing.images?.length ? listing.images : ['placeholder.jpg'];
+      imageIndex = (imageIndex + dir + images.length) % images.length;
+      document.getElementById('mainImage').src = images[imageIndex];
+      updateThumbHighlight(images.length);
+    }
+
+    function jumpImage(i) {
+      const images = listing.images?.length ? listing.images : ['placeholder.jpg'];
+      imageIndex = i;
+      document.getElementById('mainImage').src = images[i];
+      updateThumbHighlight(images.length);
+    }
+
+    function updateThumbHighlight(count) {
+      for (let i = 0; i < count; i++) {
+        const t = document.getElementById(`thumb-${i}`);
+        if (t) t.style.borderColor = i === imageIndex ? '#0b3a79' : '#cde';
+      }
+    }
+
+    // ── Interest ──────────────────────────────────────────────────
+    document.getElementById('showInterestBtn').addEventListener('click', () => {
+      document.getElementById('showInterestBtn').style.display = 'none';
+      document.getElementById('messageBox').style.display      = 'block';
+    });
+
+    function cancelInterest() {
+      document.getElementById('showInterestBtn').style.display = 'block';
+      document.getElementById('messageBox').style.display      = 'none';
+    }
+
+    async function submitInterest() {
+      const note = document.getElementById('messageInput').value.trim();
+      if (!note) { toast("Write a message first.", 'error'); return; }
+
+      document.getElementById('sendInterestBtn').disabled    = true;
+      document.getElementById('sendInterestBtn').textContent = "Sending…";
+
+      const { error } = await sbClient.from('interests').insert([{
+        listing_id: listing.id,
+        buyer_id:   currentUser.id,
+        note
+      }]);
+
+      if (error) {
+        toast(`Failed to send: ${error.message}`, 'error');
+        document.getElementById('sendInterestBtn').disabled    = false;
+        document.getElementById('sendInterestBtn').textContent = "Send Message";
+      } else {
+        document.getElementById('messageBox').style.display   = 'none';
+        document.getElementById('interestSent').style.display = 'block';
+        toast("Message sent to seller!");
+      }
+    }
+
+    function showError() {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('errorState').style.display   = 'block';
+    }
+  </script>
+</body>
+</html>
