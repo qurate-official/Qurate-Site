@@ -1,1 +1,7 @@
-Analyze the uploaded images. Evaluate the overall quality of the product images. If the images are of different products, give the score as 0. The images would be of a same product from different angles. Calculate a single, unified final quality score from 0 to 100. Respond with ONLY the final integer value. Do not include markdown, text, punctuation, or spaces. If there are no images. Respond with nothing.
+Analyze the uploaded images to inspect the physical condition of the product item.
+
+1. If no images are provided, respond with absolutely nothing.
+2. If the images show completely different product items, respond with ONLY the integer 0.
+3. If the images show the same product item from different angles, inspect it for physical defects, damages, scratches, dents, cracks, stains, or signs of wear. Calculate a single, unified condition score from 1 to 100 (where 100 means the item is in flawless, brand-new physical condition, and lower scores indicate progressively worse damage or defects).
+
+Respond with ONLY the final integer value. Do not include markdown, text, punctuation, or spaces.
