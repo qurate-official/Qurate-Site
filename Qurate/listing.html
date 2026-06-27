@@ -36,13 +36,11 @@
           <div style="position:relative;border-radius:16px;overflow:hidden;background:#f0f4ff;">
             <img id="mainImage" src="" alt="Listing image"
               style="width:100%;display:block;object-fit:contain;">
-            <!-- Prev / Next -->
             <button id="prevBtn" onclick="shiftImage(-1)"
               style="display:none;position:absolute;left:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;">‹</button>
             <button id="nextBtn" onclick="shiftImage(1)"
               style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;">›</button>
           </div>
-          <!-- Thumbnails -->
           <div id="thumbRow" style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;"></div>
         </div>
 
@@ -68,7 +66,7 @@
 
           <div id="listingMeta" style="font-size:0.8rem;color:#888;"></div>
 
-          <!-- Interest section -->
+          <!-- Interest / owner section -->
           <div id="interestSection">
             <button id="showInterestBtn" class="btn btn-primary" style="width:100%;">Show Interest</button>
             <div id="messageBox" style="display:none;margin-top:1rem;">
@@ -83,9 +81,15 @@
             <div id="interestSent" style="display:none;padding:1rem;background:#e8f4ee;border-radius:12px;color:#0a6632;font-weight:600;text-align:center;">
               ✓ Message sent to seller
             </div>
-            <div id="ownListingNote" style="display:none;padding:1rem;background:#f0f4ff;border-radius:12px;color:#1252a3;text-align:center;font-size:0.9rem;">
-              This is your listing
+
+            <!-- Owner panel -->
+            <div id="ownListingNote" style="display:none;flex-direction:column;gap:0.75rem;">
+              <div style="padding:0.6rem 1rem;background:#f0f4ff;border-radius:10px;color:#1252a3;text-align:center;font-size:0.85rem;font-weight:600;">
+                Your listing
+              </div>
+              <div id="ownerActions" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
             </div>
+
           </div>
 
         </div>
@@ -139,13 +143,13 @@
       document.getElementById('listingMeta').textContent     = `Listed ${new Date(listing.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}`;
 
       const statusEl = document.getElementById('listingStatus');
-      statusEl.textContent  = listing.status;
-      statusEl.className    = `badge ${listing.status === 'available' ? 'badge-green' : 'badge-red'}`;
+      statusEl.textContent = listing.status;
+      statusEl.className   = `badge ${listing.status === 'available' ? 'badge-green' : 'badge-red'}`;
 
       if (listing.ai_score != null) {
         const aiEl = document.getElementById('listingAiScore');
-        aiEl.textContent    = `AI Score ${listing.ai_score}/100`;
-        aiEl.style.display  = 'inline-block';
+        aiEl.textContent   = `AI Score ${listing.ai_score}/100`;
+        aiEl.style.display = 'inline-block';
       }
 
       const school = listing.school || '';
@@ -154,7 +158,7 @@
       // Images
       const images = listing.images?.length ? listing.images : ['placeholder.jpg'];
       imageIndex = 0;
-      setMainImage(images);
+      document.getElementById('mainImage').src = images[0];
 
       const thumbRow = document.getElementById('thumbRow');
       if (images.length > 1) {
@@ -167,15 +171,13 @@
         document.getElementById('nextBtn').style.display = 'flex';
       }
 
-      // Own listing check
+      // Owner vs buyer
       if (listing.seller_id === currentUser.id) {
         document.getElementById('showInterestBtn').style.display = 'none';
-        document.getElementById('ownListingNote').style.display  = 'block';
+        const noteEl = document.getElementById('ownListingNote');
+        noteEl.style.display = 'flex';
+        renderOwnerActions();
       }
-    }
-
-    function setMainImage(images) {
-      document.getElementById('mainImage').src = images[imageIndex];
     }
 
     function shiftImage(dir) {
@@ -231,6 +233,81 @@
         document.getElementById('messageBox').style.display   = 'none';
         document.getElementById('interestSent').style.display = 'block';
         toast("Message sent to seller!");
+      }
+    }
+
+    // ── Owner actions ─────────────────────────────────────────────
+    function renderOwnerActions() {
+      const status = listing.status;
+      const el = document.getElementById('ownerActions');
+
+      el.innerHTML = `
+        ${status !== 'reserved'
+          ? `<button class="btn btn-outline btn-sm" style="width:100%;" onclick="updateStatus('reserved')">Mark as Reserved</button>`
+          : `<button class="btn btn-outline btn-sm" style="width:100%;" onclick="updateStatus('available')">Unmark Reserved</button>`
+        }
+        ${status !== 'sold'
+          ? `<button class="btn btn-outline btn-sm" style="width:100%;border-color:#0a6632;color:#0a6632;" onclick="updateStatus('sold')">Mark as Sold</button>`
+          : `<button class="btn btn-outline btn-sm" style="width:100%;border-color:#0a6632;color:#0a6632;" onclick="updateStatus('available')">Mark as Available</button>`
+        }
+        <button class="btn btn-sm" style="width:100%;background:#fef2f2;color:#b91c1c;border:1.5px solid #fca5a5;" onclick="confirmDelete()">
+          Delete Listing
+        </button>
+      `;
+    }
+
+    async function updateStatus(newStatus) {
+      const btns = document.querySelectorAll('#ownerActions button');
+      btns.forEach(b => b.disabled = true);
+
+      const { error } = await sbClient
+        .from('listings')
+        .update({ status: newStatus })
+        .eq('id', listing.id);
+
+      if (error) {
+        toast(`Failed to update: ${error.message}`, 'error');
+        btns.forEach(b => b.disabled = false);
+      } else {
+        listing.status = newStatus;
+        const statusEl = document.getElementById('listingStatus');
+        statusEl.textContent = newStatus;
+        statusEl.className   = `badge ${newStatus === 'available' ? 'badge-green' : 'badge-red'}`;
+        renderOwnerActions();
+        toast(`Marked as ${newStatus}.`);
+      }
+    }
+
+    function confirmDelete() {
+      if (!confirm('Delete this listing? This cannot be undone — all images and enquiries will be permanently removed.')) return;
+      deleteListing();
+    }
+
+    async function deleteListing() {
+      const delBtn = document.querySelector('#ownerActions button:last-child');
+      if (delBtn) { delBtn.disabled = true; delBtn.textContent = 'Deleting…'; }
+
+      if (listing.images?.length) {
+        const paths = listing.images.map(url => {
+          const match = url.match(/\/storage\/v1\/object\/public\/[^/]+\/(.+)/);
+          return match ? match[1] : null;
+        }).filter(Boolean);
+        if (paths.length) {
+          await sbClient.storage.from('listing-images').remove(paths);
+        }
+      }
+
+      const { error } = await sbClient
+        .from('listings')
+        .delete()
+        .eq('id', listing.id);
+
+      if (error) {
+        toast(`Delete failed: ${error.message}`, 'error');
+        if (delBtn) { delBtn.disabled = false; delBtn.textContent = 'Delete Listing'; }
+      } else {
+        toast('Listing deleted.');
+        setTimeout(() => window.location.href = 'dashboard.html', 1200);
       }
     }
 
