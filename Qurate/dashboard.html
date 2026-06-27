@@ -164,14 +164,26 @@
       
       const asseller = assellerRaw;
       // Enquiries where I'm the buyer
-      const { data: asbuyer } = await sbClient
+      const { data: asbuyerRaw } = await sbClient
         .from('interests')
-        .select('*, listings(title)')
+        .select('*')
         .eq('buyer_id', currentUser.id);
-    
-      const sellerRows = (aseller || []).map(r => ({ ...r, role: 'seller', listingTitle: titleMap[r.listing_id] || 'Unknown' }));
-      const buyerRows  = (asbuyer  || []).map(r => ({ ...r, role: 'buyer',  listingTitle: r.listings?.title || 'Unknown' }));
-    
+      
+      const asbuyer = asbuyerRaw || [];
+      
+      // Fetch listing titles for buyer rows
+      const buyerListingIds = asbuyer.map(r => r.listing_id);
+      let buyerTitleMap = {};
+      if (buyerListingIds.length) {
+        const { data: buyerListings } = await sbClient
+          .from('listings')
+          .select('id, title')
+          .in('id', buyerListingIds);
+        buyerTitleMap = Object.fromEntries((buyerListings || []).map(l => [l.id, l.title]));
+      }
+      
+      const sellerRows = asseller.map(r => ({ ...r, role: 'seller', listingTitle: titleMap[r.listing_id] || 'Unknown' }));
+      const buyerRows  = asbuyer.map(r => ({ ...r, role: 'buyer', listingTitle: buyerTitleMap[r.listing_id] || 'Unknown' }));
       const all = [...sellerRows, ...buyerRows]
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     
