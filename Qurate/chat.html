@@ -212,7 +212,7 @@
 
       <div id="loadingState" style="padding:4rem 0;text-align:center;color:var(--ink3);">Loading chat…</div>
 
-      <div id="chatContent" style="display:none;flex:1;flex-direction:column;min-height:0;">
+      <div id="chatContent" style="display:none;flex:1;flex-direction:column;min-height:0;height:100%;">
 
         <!-- Header -->
         <div class="chat-header" id="chatHeader"></div>
@@ -251,6 +251,16 @@
 
     document.addEventListener('DOMContentLoaded', async () => {
       currentUser = await checkUserSession();
+      if (!currentUser) return;
+      console.log('user ok:', currentUser.id);
+      
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      console.log('interest id:', id);
+      
+      const { data: interestData, error: ie } = await sbClient
+        .from('interests').select('*').eq('id', id).single();
+      console.log('interest:', interestData, 'error:', ie);
       if (!currentUser) return;
 
       const params = new URLSearchParams(window.location.search);
