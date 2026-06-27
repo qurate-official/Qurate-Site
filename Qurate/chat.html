@@ -17,7 +17,6 @@
       flex-direction: column;
       height: calc(100vh - 60px);
     }
-
     .chat-header {
       background: #fff;
       border: 1.5px solid var(--border);
@@ -28,7 +27,6 @@
       align-items: center;
       gap: 1rem;
     }
-
     .chat-header-thumb {
       width: 52px;
       height: 52px;
@@ -37,11 +35,9 @@
       background: var(--secondary);
       flex-shrink: 0;
     }
-
     .chat-header-info { flex: 1; min-width: 0; }
     .chat-header-title { font-weight: 700; color: var(--navy); font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .chat-header-sub { font-size: 0.78rem; color: var(--ink3); margin-top: 0.15rem; }
-
     .chat-messages {
       flex: 1;
       overflow-y: auto;
@@ -50,7 +46,6 @@
       gap: 0.5rem;
       padding: 0.25rem 0 1rem;
     }
-
     .enquiry-bubble {
       background: #f0f4ff;
       border: 1.5px solid rgba(11,58,121,0.12);
@@ -58,8 +53,7 @@
       padding: 0.85rem 1rem;
       margin-bottom: 0.5rem;
     }
-
-    .enquiry-bubble .label {
+    .enquiry-bubble .enq-label {
       font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.07em;
@@ -68,21 +62,17 @@
       margin-bottom: 0.35rem;
       display: block;
     }
-
-    .enquiry-bubble .body {
+    .enquiry-bubble .enq-body {
       font-size: 0.9rem;
       color: var(--ink2);
       line-height: 1.5;
     }
-
     .msg-row {
       display: flex;
       align-items: flex-end;
       gap: 0.5rem;
     }
-
     .msg-row.mine { flex-direction: row-reverse; }
-
     .msg-avatar {
       width: 28px;
       height: 28px;
@@ -96,9 +86,7 @@
       font-weight: 700;
       flex-shrink: 0;
     }
-
     .msg-avatar.theirs { background: var(--blue-mid); }
-
     .msg-bubble {
       max-width: 72%;
       padding: 0.6rem 0.9rem;
@@ -106,28 +94,23 @@
       font-size: 0.875rem;
       line-height: 1.5;
     }
-
     .msg-row.mine .msg-bubble {
       background: var(--blue-mid);
       color: #fff;
       border-bottom-right-radius: 4px;
     }
-
     .msg-row.theirs .msg-bubble {
       background: #f0f4ff;
       color: var(--ink2);
       border-bottom-left-radius: 4px;
     }
-
     .msg-time {
       font-size: 0.65rem;
       color: var(--ink3);
       margin-top: 0.2rem;
       text-align: right;
     }
-
     .msg-row.theirs .msg-time { text-align: left; }
-
     .chat-input-bar {
       display: flex;
       gap: 0.6rem;
@@ -135,7 +118,6 @@
       padding-top: 0.75rem;
       border-top: 1.5px solid var(--border);
     }
-
     .chat-input-bar textarea {
       flex: 1;
       resize: none;
@@ -150,9 +132,7 @@
       max-height: 120px;
       line-height: 1.5;
     }
-
     .chat-input-bar textarea:focus { border-color: var(--blue-mid); }
-
     .send-btn {
       width: 40px;
       height: 40px;
@@ -166,10 +146,8 @@
       flex-shrink: 0;
       color: #fff;
     }
-
     .send-btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .send-btn:hover:not(:disabled) { background: var(--blue); }
-
     .date-divider {
       text-align: center;
       font-size: 0.7rem;
@@ -177,7 +155,6 @@
       margin: 0.5rem 0;
       position: relative;
     }
-
     .date-divider::before, .date-divider::after {
       content: '';
       position: absolute;
@@ -186,7 +163,6 @@
       height: 1px;
       background: var(--border);
     }
-
     .date-divider::before { left: 0; }
     .date-divider::after { right: 0; }
   </style>
@@ -213,14 +189,8 @@
       <div id="loadingState" style="padding:4rem 0;text-align:center;color:var(--ink3);">Loading chat…</div>
 
       <div id="chatContent" style="display:none;flex:1;flex-direction:column;min-height:0;height:100%;">
-
-        <!-- Header -->
         <div class="chat-header" id="chatHeader"></div>
-
-        <!-- Messages -->
         <div class="chat-messages" id="chatMessages"></div>
-
-        <!-- Input -->
         <div class="chat-input-bar">
           <textarea id="msgInput" rows="1" placeholder="Type a message…"
             oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
@@ -228,7 +198,6 @@
             <i data-lucide="send" style="width:16px;height:16px;"></i>
           </button>
         </div>
-
       </div>
 
       <div id="errorState" style="display:none;padding:4rem 0;text-align:center;color:#b91c1c;">Chat not found.</div>
@@ -239,10 +208,10 @@
 
   <script src="supabaseClient.js"></script>
   <script>
-    let currentUser = null;
-    let interest    = null;
-    let listing     = null;
-    let realtimeSub = null;
+    var currentUser = null;
+    var interest    = null;
+    var listing     = null;
+    var realtimeSub = null;
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await sbClient.auth.signOut();
@@ -252,153 +221,131 @@
     document.addEventListener('DOMContentLoaded', async () => {
       currentUser = await checkUserSession();
       if (!currentUser) return;
-      console.log('user ok:', currentUser.id);
-      
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get('id');
-      console.log('interest id:', id);
-      
-      const { data: interestData, error: ie } = await sbClient
-        .from('interests').select('*').eq('id', id).single();
-      console.log('interest:', interestData, 'error:', ie);
-      if (!currentUser) return;
 
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get('id');
+      var params = new URLSearchParams(window.location.search);
+      var id = params.get('id');
+      console.log('user:', currentUser.id, 'interest id:', id);
       if (!id) { showError(); return; }
 
-      // Load interest
-      const { data: interestData, error: ie } = await sbClient
-        .from('interests')
-        .select('*')
-        .eq('id', id)
-        .single();
+      var res1 = await sbClient.from('interests').select('*').eq('id', id).single();
+      console.log('interest fetch:', res1.data, res1.error);
+      if (res1.error || !res1.data) { showError(); return; }
+      interest = res1.data;
 
-      if (ie || !interestData) { showError(); return; }
-      interest = interestData;
-
-      // Load listing
-      const { data: listingData } = await sbClient
-        .from('listings')
-        .select('id, title, price, images, seller_id')
-        .eq('id', interest.listing_id)
-        .single();
-
-      listing = listingData;
+      var res2 = await sbClient.from('listings').select('id, title, price, images, seller_id').eq('id', interest.listing_id).single();
+      console.log('listing fetch:', res2.data, res2.error);
+      listing = res2.data;
 
       renderHeader();
       await loadMessages();
       subscribeRealtime();
 
       document.getElementById('loadingState').style.display = 'none';
-      const cc = document.getElementById('chatContent');
-      cc.style.display = 'flex';
+      var cc = document.getElementById('chatContent');
+      cc.style.cssText = 'display:flex;flex:1;flex-direction:column;min-height:0;height:100%;';
       lucide.createIcons();
       scrollToBottom();
     });
 
     function renderHeader() {
-      const isSeller = listing?.seller_id === currentUser.id;
-      const otherName = isSeller
+      var isSeller = listing && listing.seller_id === currentUser.id;
+      var otherName = isSeller
         ? (interest.buyer_name || interest.buyer_email || 'Buyer')
         : 'Seller';
 
-      document.getElementById('chatHeader').innerHTML = `
-        <img class="chat-header-thumb"
-          src="${listing?.images?.[0] || 'placeholder.jpg'}"
-          alt="${listing?.title || ''}"
-          onclick="window.open('listing.html?id=${listing?.id}','_blank')"
-          style="cursor:pointer;">
-        <div class="chat-header-info">
-          <div class="chat-header-title">${listing?.title || 'Listing'}</div>
-          <div class="chat-header-sub">₹${listing?.price || ''} · Chat with ${otherName}</div>
-        </div>
-        <a class="btn btn-outline btn-sm" href="listing.html?id=${listing?.id}" target="_blank">View listing</a>
-      `;
+      document.getElementById('chatHeader').innerHTML =
+        '<img class="chat-header-thumb" src="' + (listing && listing.images && listing.images[0] ? listing.images[0] : 'placeholder.jpg') + '" alt="" onclick="window.open(\'listing.html?id=' + (listing ? listing.id : '') + '\',\'_blank\')" style="cursor:pointer;">' +
+        '<div class="chat-header-info">' +
+          '<div class="chat-header-title">' + (listing ? listing.title : 'Listing') + '</div>' +
+          '<div class="chat-header-sub">₹' + (listing ? listing.price : '') + ' · Chat with ' + otherName + '</div>' +
+        '</div>' +
+        '<a class="btn btn-outline btn-sm" href="listing.html?id=' + (listing ? listing.id : '') + '" target="_blank">View listing</a>';
     }
 
     async function loadMessages() {
-      const { data, error } = await sbClient
-        .from('messages')
-        .select('*')
-        .eq('interest_id', interest.id)
-        .order('created_at', { ascending: true });
-
-      if (error) { toast('Failed to load messages.', 'error'); return; }
-      renderMessages(data || []);
+      var res = await sbClient.from('messages').select('*').eq('interest_id', interest.id).order('created_at', { ascending: true });
+      if (res.error) { toast('Failed to load messages.', 'error'); return; }
+      renderMessages(res.data || []);
     }
 
     function renderMessages(msgs) {
-      const container = document.getElementById('chatMessages');
+      var container = document.getElementById('chatMessages');
+      var html = '<div class="enquiry-bubble">' +
+        '<span class="enq-label">Initial Enquiry · ' + new Date(interest.created_at).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'}) + '</span>' +
+        '<div class="enq-body">' + escHtml(interest.note) + '</div>' +
+        '</div>';
 
-      // Initial enquiry bubble always at top
-      let html = `
-        <div class="enquiry-bubble">
-          <span class="label">Initial Enquiry · ${new Date(interest.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</span>
-          <div class="body">${escHtml(interest.note)}</div>
-        </div>
-      `;
-
-      let lastDate = '';
-      msgs.forEach(msg => {
-        const mine = msg.sender_id === currentUser.id;
-        const d = new Date(msg.created_at);
-        const dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-        const timeStr = d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+      var lastDate = '';
+      msgs.forEach(function(msg) {
+        var mine = msg.sender_id === currentUser.id;
+        var d = new Date(msg.created_at);
+        var dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        var timeStr = d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 
         if (dateStr !== lastDate) {
-          html += `<div class="date-divider">${dateStr}</div>`;
+          html += '<div class="date-divider">' + dateStr + '</div>';
           lastDate = dateStr;
         }
 
-        const initials = mine
-          ? getInitials(currentUser)
-          : (interest.buyer_name || interest.buyer_email || 'U');
+        var initials = mine ? getMineInitials() : getTheirsInitials();
 
-        html += `
-          <div class="msg-row ${mine ? 'mine' : 'theirs'}">
-            <div class="msg-avatar ${mine ? 'mine' : 'theirs'}">${getInitialsStr(initials, mine)}</div>
-            <div>
-              <div class="msg-bubble">${escHtml(msg.body)}</div>
-              <div class="msg-time">${timeStr}</div>
-            </div>
-          </div>
-        `;
+        html += '<div class="msg-row ' + (mine ? 'mine' : 'theirs') + '">' +
+          '<div class="msg-avatar ' + (mine ? 'mine' : 'theirs') + '">' + initials + '</div>' +
+          '<div>' +
+            '<div class="msg-bubble">' + escHtml(msg.body) + '</div>' +
+            '<div class="msg-time">' + timeStr + '</div>' +
+          '</div>' +
+          '</div>';
       });
 
       container.innerHTML = html;
     }
 
+    function getMineInitials() {
+      var meta = currentUser.user_metadata || {};
+      var f = (meta.first_name || '')[0] || '';
+      var l = (meta.last_name  || '')[0] || '';
+      return (f + l).toUpperCase() || '?';
+    }
+
+    function getTheirsInitials() {
+      if (interest.buyer_name) {
+        var parts = interest.buyer_name.trim().split(' ');
+        return ((parts[0] || '')[0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+      }
+      return (interest.buyer_email ? interest.buyer_email[0] : 'U').toUpperCase();
+    }
+
     function subscribeRealtime() {
       realtimeSub = sbClient
-        .channel(`messages:${interest.id}`)
+        .channel('messages_' + interest.id)
         .on('postgres_changes', {
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `interest_id=eq.${interest.id}`
-        }, () => {
+          filter: 'interest_id=eq.' + interest.id
+        }, function() {
           loadMessages().then(scrollToBottom);
         })
         .subscribe();
     }
 
     async function sendMessage() {
-      const input = document.getElementById('msgInput');
-      const body = input.value.trim();
+      var input = document.getElementById('msgInput');
+      var body = input.value.trim();
       if (!body) return;
 
-      const btn = document.getElementById('sendBtn');
+      var btn = document.getElementById('sendBtn');
       btn.disabled = true;
 
-      const { error } = await sbClient.from('messages').insert([{
+      var res = await sbClient.from('messages').insert([{
         interest_id: interest.id,
         sender_id:   currentUser.id,
-        body
+        body:        body
       }]);
 
-      if (error) {
-        toast(`Failed to send: ${error.message}`, 'error');
+      if (res.error) {
+        toast('Failed to send: ' + res.error.message, 'error');
       } else {
         input.value = '';
         input.style.height = 'auto';
@@ -422,32 +369,12 @@
     }
 
     function scrollToBottom() {
-      const c = document.getElementById('chatMessages');
+      var c = document.getElementById('chatMessages');
       if (c) c.scrollTop = c.scrollHeight;
     }
 
-    function getInitials(user) {
-      const meta = user.user_metadata || {};
-      return `${meta.first_name || ''}${meta.last_name || ''}` || user.email || 'U';
-    }
-
-    function getInitialsStr(str, mine) {
-      if (mine) {
-        const meta = currentUser.user_metadata || {};
-        const f = (meta.first_name || '')[0] || '';
-        const l = (meta.last_name  || '')[0] || '';
-        return (f + l).toUpperCase() || '?';
-      }
-      // other side
-      if (interest.buyer_name) {
-        const parts = interest.buyer_name.trim().split(' ');
-        return (parts[0]?.[0] || '') + (parts[1]?.[0] || '').toUpperCase();
-      }
-      return (interest.buyer_email?.[0] || 'U').toUpperCase();
-    }
-
     function escHtml(str) {
-      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     function showError() {
