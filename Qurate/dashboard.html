@@ -143,46 +143,57 @@
           </div>
         </div>`;
     }
-
+    
     async function loadBuyerInterests() {
       const target = document.getElementById('buyersTarget');
-
-      // First get seller's listing IDs
+    
       const { data: myListings } = await sbClient
         .from('listings')
         .select('id, title')
         .eq('seller_id', currentUser.id);
-
-      if (!myListings || myListings.length === 0) {
-        target.innerHTML = `<p style="padding: 2rem; color: var(--ink3);">No buyer enquiries yet.</p>`;
-        return;
-      }
-
-      const myIds = myListings.map(l => l.id);
-      const titleMap = Object.fromEntries(myListings.map(l => [l.id, l.title]));
-
-      const { data, error } = await sbClient
+    
+      const myIds = myListings?.map(l => l.id) || [];
+      const titleMap = Object.fromEntries((myListings || []).map(l => [l.id, l.title]));
+    
+      // Enquiries where I'm the seller
+      const { data: asseller } = myIds.length
+        ? await sbClient.from('interests').select('*').in('listing_id', myIds)
+        : { data: [] };
+    
+      // Enquiries where I'm the buyer
+      const { data: asbuyer } = await sbClient
         .from('interests')
-        .select('*')
-        .in('listing_id', myIds);
-
-      if (error || !data || data.length === 0) {
-        target.innerHTML = `<p style="padding: 2rem; color: var(--ink3);">No buyer enquiries yet.</p>`;
+        .select('*, listings(title)')
+        .eq('buyer_id', currentUser.id);
+    
+      const sellerRows = (aseller || []).map(r => ({ ...r, role: 'seller', listingTitle: titleMap[r.listing_id] || 'Unknown' }));
+      const buyerRows  = (asbuyer  || []).map(r => ({ ...r, role: 'buyer',  listingTitle: r.listings?.title || 'Unknown' }));
+    
+      const all = [...sellerRows, ...buyerRows]
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    
+      if (all.length === 0) {
+        target.innerHTML = `<p style="padding:2rem;color:var(--ink3);">No chats yet.</p>`;
         return;
       }
-
-      target.innerHTML = data.map(record => `
-        <div class="buyer-row">
-          <div style="flex: 1;">
-            <p style="font-weight: 600; color: var(--navy);">Enquiry re: ${titleMap[record.listing_id] || 'Unknown listing'}</p>
-            <p style="font-size: 0.85rem; background: #f0f4ff; padding: 0.5rem 0.75rem; border-radius: 8px; margin-top: 0.25rem;">"${record.note}"</p>
-            <p style="font-size: 0.75rem; color: #888; margin-top: 0.25rem;">${new Date(record.created_at).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})}</p>
+    
+      target.innerHTML = all.map(r => `
+        <div class="buyer-row" onclick="window.location.href='chat.html?id=${r.id}'" style="cursor:pointer;">
+          <div style="flex:1;">
+            <p style="font-weight:600;color:var(--navy);">
+              ${r.listingTitle}
+              <span style="font-size:0.75rem;font-weight:400;color:#888;margin-left:0.5rem;">${r.role === 'seller' ? `from ${r.buyer_name || r.buyer_email || 'Buyer'}` : 'You enquired'}</span>
+            </p>
+            <p style="font-size:0.85rem;background:#f0f4ff;padding:0.5rem 0.75rem;border-radius:8px;margin-top:0.25rem;">"${r.note}"</p>
+            <p style="font-size:0.75rem;color:#888;margin-top:0.25rem;">${new Date(r.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</p>
           </div>
-          <div>
-            <span class="badge badge-yellow">${record.unlocked ? 'Unlocked' : 'Pending'}</span>
+          <div style="display:flex;align-items:center;">
+            <i data-lucide="chevron-right" style="color:#888;"></i>
           </div>
         </div>
       `).join('');
+    
+      lucide.createIcons();
     }
 
     function switchTab(mode) {
