@@ -156,10 +156,13 @@
       const titleMap = Object.fromEntries((myListings || []).map(l => [l.id, l.title]));
     
       // Enquiries where I'm the seller
-      const { data: asseller } = myIds.length
-        ? await sbClient.from('interests').select('*').in('listing_id', myIds)
-        : { data: [] };
-    
+      let assellerRaw = [];
+      if (myIds.length) {
+        const { data } = await sbClient.from('interests').select('*').in('listing_id', myIds);
+        assellerRaw = data || [];
+      }
+      
+      const asseller = assellerRaw;
       // Enquiries where I'm the buyer
       const { data: asbuyer } = await sbClient
         .from('interests')
