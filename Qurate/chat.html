@@ -88,7 +88,7 @@
     }
     .msg-avatar.theirs { background: var(--blue-mid); }
     .msg-bubble {
-      max-width: 72%;
+      max-width: 90%;
       padding: 0.6rem 0.9rem;
       border-radius: 16px;
       font-size: 0.875rem;
@@ -215,7 +215,7 @@
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await sbClient.auth.signOut();
-      window.location.href = "auth.html";
+      window.location.href = "index.html";
     });
 
     document.addEventListener('DOMContentLoaded', async () => {
