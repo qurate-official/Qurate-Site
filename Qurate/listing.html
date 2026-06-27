@@ -219,9 +219,12 @@
       document.getElementById('sendInterestBtn').disabled    = true;
       document.getElementById('sendInterestBtn').textContent = "Sending…";
 
+      const meta = currentUser.user_metadata || {};
       const { error } = await sbClient.from('interests').insert([{
-        listing_id: listing.id,
-        buyer_id:   currentUser.id,
+        listing_id:  listing.id,
+        buyer_id:    currentUser.id,
+        buyer_name:  `${meta.first_name || ''} ${meta.last_name || ''}`.trim(),
+        buyer_email: currentUser.email,
         note
       }]);
 
