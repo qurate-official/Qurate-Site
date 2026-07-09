@@ -80,11 +80,20 @@
 
       <div>
         <label style="display:block;font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--blue-mid);margin-bottom:0.5rem;">Password</label>
-        <input type="password" id="password" required minlength="6"
-          style="width:100%;padding:0.8rem 1rem;background:#fff;border:1.5px solid var(--border-strong);border-radius:var(--r-md);color:var(--ink);font-size:0.95rem;outline:none;box-sizing:border-box;transition:border-color 0.2s;"
-          placeholder="••••••••"
-          onfocus="this.style.borderColor='var(--blue-mid)'"
-          onblur="this.style.borderColor='var(--border-strong)'">
+        <div style="position:relative;">
+          <input type="password" id="password" required minlength="6"
+            style="width:100%;padding:0.8rem 2.75rem 0.8rem 1rem;background:#fff;border:1.5px solid var(--border-strong);border-radius:var(--r-md);color:var(--ink);font-size:0.95rem;outline:none;box-sizing:border-box;transition:border-color 0.2s;"
+            placeholder="••••••••"
+            onfocus="this.style.borderColor='var(--blue-mid)'"
+            onblur="this.style.borderColor='var(--border-strong)'">
+          <button type="button" id="toggle-password" aria-label="Hold to show password"
+            style="position:absolute;top:0;right:0;height:100%;width:2.75rem;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:var(--blue-mid);padding:0;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;">
+            <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <button type="submit" id="submit-btn"
@@ -129,6 +138,7 @@
     const toggleBtn      = document.getElementById('toggle-btn');
     const toggleText     = document.getElementById('toggle-text');
     const statusBox      = document.getElementById('status-box');
+    const togglePasswordBtn = document.getElementById('toggle-password');
 
     let isLoginMode = true;
 
@@ -226,6 +236,28 @@
         }
       }
     });
+
+    // Hold-to-reveal password: show plain text while pressed, dots when released.
+    function showPassword() {
+      passwordInput.type = 'text';
+    }
+    function hidePassword() {
+      passwordInput.type = 'password';
+    }
+
+    togglePasswordBtn.addEventListener('mousedown', showPassword);
+    togglePasswordBtn.addEventListener('mouseup', hidePassword);
+    togglePasswordBtn.addEventListener('mouseleave', hidePassword);
+
+    togglePasswordBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      showPassword();
+    }, { passive: false });
+    togglePasswordBtn.addEventListener('touchend', hidePassword);
+    togglePasswordBtn.addEventListener('touchcancel', hidePassword);
+
+    // Prevent losing focus/selection oddities and stop the button from submitting the form
+    togglePasswordBtn.addEventListener('click', (e) => e.preventDefault());
 
     function showStatus(msg, type) {
       statusBox.innerText = msg;
