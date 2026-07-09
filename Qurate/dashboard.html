@@ -24,7 +24,10 @@
           <a class="btn btn-primary btn-sm" href="add-listing.html">
             <i data-lucide="plus"></i><span>Sell Item</span>
           </a>
-          <button class="btn btn-outline btn-sm" id="logoutBtn">Log out</button>
+          <button class="btn btn-outline btn-sm" id="logoutBtn">
+            <i data-lucide="log-out"></i><span>Log out</span>
+          </button>
+          <div class="profile-circle" id="profileCircle" title="My Account"></div>
         </div>
       </div>
     </div>
@@ -53,6 +56,39 @@
 
   <div class="toast-container" id="toastContainer"></div>
 
+  <style>
+    .profile-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--navy, #0b3a79);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+      transition: filter 0.15s ease, transform 0.15s ease;
+    }
+    .profile-circle:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+    #logoutBtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    #logoutBtn i {
+      width: 16px;
+      height: 16px;
+    }
+  </style>
+
   <script src="supabaseClient.js"></script>
   <script>
     let currentUser = null;
@@ -61,6 +97,10 @@
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await sbClient.auth.signOut();
       window.location.href = "index.html";
+    });
+
+    document.getElementById('profileCircle').addEventListener('click', () => {
+      window.location.href = "view-account.html";
     });
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -75,6 +115,10 @@
 
       document.getElementById('campusTitle').textContent  = schoolDisplay;
       document.getElementById('userGreeting').textContent = `Hi, ${firstName} ${lastName}`.trim();
+
+      const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
+        || (currentUser.email ? currentUser.email.charAt(0).toUpperCase() : '?');
+      document.getElementById('profileCircle').textContent = initials;
 
       await loadDashboardMetrics();
       await loadMarketplaceListings();
