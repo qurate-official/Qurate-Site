@@ -1,1 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account — Qurate Campus</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
 
+  <nav>
+    <div class="container">
+      <div class="nav-inner">
+        <a class="logo" href="dashboard.html">
+          <img class="logo-img" src="../items/logo.jpeg" alt="Qurate logo" onerror="this.style.display='none'"/>
+        </a>
+        <div class="nav-links">
+          <a class="nav-link" href="dashboard.html">My Marketplace</a>
+        </div>
+        <div class="nav-actions">
+          <button class="btn btn-outline btn-sm" id="logoutBtn">
+            <i data-lucide="log-out"></i><span>Log out</span>
+          </button>
+          <div class="profile-circle" id="profileCircle" title="My Account"></div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container" style="padding-top: 2rem; padding-bottom: 3rem; max-width: 560px;">
+    <div class="page-header" style="margin-bottom: 1.5rem;">
+      <a href="dashboard.html" class="back-link"><i data-lucide="arrow-left"></i><span>Back to dashboard</span></a>
+      <h1 class="page-title" style="margin-top: 0.75rem;">My Account</h1>
+      <p class="page-sub">Update your profile details and password</p>
+    </div>
+
+    <div class="account-card">
+      <div class="account-avatar" id="avatarBig"></div>
+
+      <form id="profileForm">
+        <div class="form-section-title">Profile</div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="firstName">First name</label>
+            <input type="text" id="firstName" required>
+          </div>
+          <div class="field">
+            <label for="lastName">Last name</label>
+            <input type="text" id="lastName" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="school">School</label>
+          <input type="text" id="school" required>
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" disabled>
+          <p class="field-hint">Email can't be changed here.</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="saveProfileBtn">Save profile</button>
+      </form>
+
+      <hr class="divider">
+
+      <form id="passwordForm">
+        <div class="form-section-title">Change password</div>
+
+        <div class="field">
+          <label for="newPassword">New password</label>
+          <input type="password" id="newPassword" placeholder="Leave blank to keep current password" minlength="6">
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">Confirm new password</label>
+          <input type="password" id="confirmPassword" placeholder="Re-enter new password" minlength="6">
+        </div>
+
+        <button type="submit" class="btn btn-outline" id="savePasswordBtn">Update password</button>
+      </form>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <style>
+    :root {
+      --qurate-navy: var(--navy, #0b3a79);
+      --qurate-lightblue: #C3E7FF;
+    }
+
+    body {
+      background: #f4faff;
+    }
+
+    nav {
+      background: var(--qurate-lightblue) !important;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      color: var(--qurate-navy);
+      opacity: 0.7;
+      text-decoration: none;
+    }
+    .back-link i { width: 15px; height: 15px; }
+    .back-link:hover { opacity: 1; }
+
+    .profile-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--qurate-navy);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(11,58,121,0.25);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .profile-circle:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(11,58,121,0.3);
+    }
+
+    #logoutBtn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: #fff;
+      border: 1px solid rgba(11,58,121,0.15);
+      color: var(--qurate-navy);
+    }
+    #logoutBtn i { width: 16px; height: 16px; }
+
+    .account-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2.25rem;
+      border: 1px solid rgba(11,58,121,0.08);
+      box-shadow: 0 4px 16px rgba(11,58,121,0.08), 0 1px 3px rgba(11,58,121,0.05);
+    }
+
+    .account-avatar {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--qurate-navy), #144a94);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.6rem;
+      margin: 0 auto 1.75rem;
+      box-shadow: 0 6px 18px rgba(11,58,121,0.25);
+    }
+
+    .form-section-title {
+      display: inline-block;
+      font-weight: 700;
+      color: var(--qurate-navy);
+      font-size: 0.8rem;
+      margin-bottom: 1.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding-bottom: 0.4rem;
+      border-bottom: 3px solid var(--qurate-lightblue);
+    }
+
+    .field-row {
+      display: flex;
+      gap: 1rem;
+    }
+    .field-row .field { flex: 1; }
+
+    .field { margin-bottom: 1.1rem; }
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--qurate-navy);
+      margin-bottom: 0.35rem;
+    }
+    .field input {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1.5px solid #dceefc;
+      background: #fbfdff;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      box-sizing: border-box;
+      color: #16233b;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .field input:focus {
+      outline: none;
+      border-color: var(--qurate-navy);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(195,231,255,0.7);
+    }
+    .field input:disabled {
+      background: #eef6fc;
+      color: #7c93ad;
+      border-color: #e2eef8;
+    }
+    .field-hint {
+      font-size: 0.75rem;
+      color: #7c93ad;
+      margin-top: 0.3rem;
+    }
+
+    .divider {
+      border: none;
+      border-top: 2px solid var(--qurate-lightblue);
+      opacity: 0.6;
+      margin: 2rem 0;
+    }
+
+    #profileForm .btn, #passwordForm .btn {
+      width: 100%;
+      margin-top: 0.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      padding: 0.7rem 1rem;
+    }
+
+    #saveProfileBtn {
+      background: var(--qurate-navy);
+      border-color: var(--qurate-navy);
+      color: #fff;
+    }
+    #saveProfileBtn:hover {
+      background: #0d449190;
+      filter: brightness(1.08);
+    }
+
+    #savePasswordBtn {
+      background: var(--qurate-lightblue);
+      border: 1.5px solid var(--qurate-lightblue);
+      color: var(--qurate-navy);
+    }
+    #savePasswordBtn:hover {
+      background: #aee0ff;
+    }
+  </style>
+
+  <script src="supabaseClient.js"></script>
+  <script>
+    let currentUser = null;
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await sbClient.auth.signOut();
+      window.location.href = "index.html";
+    });
+
+    document.getElementById('profileCircle').addEventListener('click', () => {
+      window.location.href = "view-account.html";
+    });
+
+    function showToast(message, isError = false) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${isError ? 'toast-error' : 'toast-success'}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3500);
+    }
+
+    function setInitials(firstName, lastName, email) {
+      const initials = `${(firstName || '').charAt(0)}${(lastName || '').charAt(0)}`.toUpperCase()
+        || (email ? email.charAt(0).toUpperCase() : '?');
+      document.getElementById('profileCircle').textContent = initials;
+      document.getElementById('avatarBig').textContent = initials;
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      currentUser = await checkUserSession();
+      if (!currentUser) return;
+
+      const meta = currentUser.user_metadata || {};
+      document.getElementById('firstName').value = meta.first_name || '';
+      document.getElementById('lastName').value  = meta.last_name  || '';
+      document.getElementById('school').value    = meta.school     || '';
+      document.getElementById('email').value     = currentUser.email || '';
+
+      setInitials(meta.first_name, meta.last_name, currentUser.email);
+      lucide.createIcons();
+    });
+
+    document.getElementById('profileForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('saveProfileBtn');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName  = document.getElementById('lastName').value.trim();
+      const school    = document.getElementById('school').value.trim();
+
+      const { data, error } = await sbClient.auth.updateUser({
+        data: { first_name: firstName, last_name: lastName, school: school }
+      });
+
+      btn.disabled = false;
+      btn.textContent = 'Save profile';
+
+      if (error) {
+        showToast(error.message || 'Could not update profile.', true);
+        return;
+      }
+
+      currentUser = data.user;
+      setInitials(firstName, lastName, currentUser.email);
+      showToast('Profile updated.');
+    });
+
+    document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const newPassword     = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (!newPassword && !confirmPassword) {
+        showToast('Enter a new password to update it.', true);
+        return;
+      }
+      if (newPassword.length < 6) {
+        showToast('Password must be at least 6 characters.', true);
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        showToast('Passwords do not match.', true);
+        return;
+      }
+
+      const btn = document.getElementById('savePasswordBtn');
+      btn.disabled = true;
+      btn.textContent = 'Updating...';
+
+      const { error } = await sbClient.auth.updateUser({ password: newPassword });
+
+      btn.disabled = false;
+      btn.textContent = 'Update password';
+
+      if (error) {
+        showToast(error.message || 'Could not update password.', true);
+        return;
+      }
+
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+      showToast('Password updated.');
+    });
+  </script>
+</body>
+</html>
