@@ -8,6 +8,7 @@
   <!-- Same CDN as auth.html — exposes window.supabase, no name clash -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 
@@ -187,72 +188,140 @@
           </div>
         </div>`;
     }
-    
+
     async function loadBuyerInterests() {
       const target = document.getElementById('buyersTarget');
-    
+
       const { data: myListings } = await sbClient
         .from('listings')
-        .select('id, title')
+        .select('id, title, price, chat_unlocked')
         .eq('seller_id', currentUser.id);
-    
+
       const myIds = myListings?.map(l => l.id) || [];
-      const titleMap = Object.fromEntries((myListings || []).map(l => [l.id, l.title]));
-    
+      const listingMap = Object.fromEntries((myListings || []).map(l => [l.id, l]));
+
       // Enquiries where I'm the seller
       let assellerRaw = [];
       if (myIds.length) {
         const { data } = await sbClient.from('interests').select('*').in('listing_id', myIds);
         assellerRaw = data || [];
       }
-      
       const asseller = assellerRaw;
+
       // Enquiries where I'm the buyer
       const { data: asbuyerRaw } = await sbClient
         .from('interests')
         .select('*')
         .eq('buyer_id', currentUser.id);
-      
       const asbuyer = asbuyerRaw || [];
-      
-      // Fetch listing titles for buyer rows
+
+      // Fetch listing info for buyer rows
       const buyerListingIds = asbuyer.map(r => r.listing_id);
-      let buyerTitleMap = {};
+      let buyerListingMap = {};
       if (buyerListingIds.length) {
         const { data: buyerListings } = await sbClient
           .from('listings')
-          .select('id, title')
+          .select('id, title, price, chat_unlocked')
           .in('id', buyerListingIds);
-        buyerTitleMap = Object.fromEntries((buyerListings || []).map(l => [l.id, l.title]));
+        buyerListingMap = Object.fromEntries((buyerListings || []).map(l => [l.id, l]));
       }
-      
-      const sellerRows = asseller.map(r => ({ ...r, role: 'seller', listingTitle: titleMap[r.listing_id] || 'Unknown' }));
-      const buyerRows  = asbuyer.map(r => ({ ...r, role: 'buyer', listingTitle: buyerTitleMap[r.listing_id] || 'Unknown' }));
+
+      const sellerRows = asseller.map(r => ({ ...r, role: 'seller', listing: listingMap[r.listing_id] }));
+      const buyerRows  = asbuyer.map(r => ({ ...r, role: 'buyer', listing: buyerListingMap[r.listing_id] }));
       const all = [...sellerRows, ...buyerRows]
         .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    
+
       if (all.length === 0) {
         target.innerHTML = `<p style="padding:2rem;color:var(--ink3);">No chats yet.</p>`;
         return;
       }
-    
-      target.innerHTML = all.map(r => `
-        <div class="buyer-row" onclick="window.location.href='chat.html?id=${r.id}'" style="cursor:pointer;">
-          <div style="flex:1;">
-            <p style="font-weight:600;color:var(--navy);">
-              ${r.listingTitle}
-              <span style="font-size:0.75rem;font-weight:400;color:#888;margin-left:0.5rem;">${r.role === 'seller' ? `from ${r.buyer_name || r.buyer_email || 'Buyer'}` : 'You enquired'}</span>
-            </p>
-            <p style="font-size:0.85rem;background:#f0f4ff;padding:0.5rem 0.75rem;border-radius:8px;margin-top:0.25rem;">"${r.note}"</p>
-            <p style="font-size:0.75rem;color:#888;margin-top:0.25rem;">${new Date(r.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</p>
-          </div>
-          <div style="display:flex;align-items:center;">
-            <i data-lucide="chevron-right" style="color:#888;"></i>
-          </div>
-        </div>
-      `).join('');
-    
+
+      target.innerHTML = all.map(r => {
+        const title = r.listing?.title || 'Unknown listing';
+        const unlocked = r.listing?.chat_unlocked;
+
+        if (unlocked) {
+          return `
+            <div class="buyer-row" onclick="window.location.href='chat.html?id=${r.id}'" style="cursor:pointer;">
+              <div style="flex:1;">
+                <p style="font-weight:600;color:var(--navy);">Enquiry for ${title}</p>
+              </div>
+              <div style="display:flex;align-items:center;">
+                <i data-lucide="chevron-right" style="color:#888;"></i>
+              </div>
+            </div>`;
+        }
+
+        if (r.role === 'seller') {
+          const amount = Math.round((r.listing?.price || 0) * 0.05);
+          return `
+            <div class="buyer-row">
+              <div style="flex:1;">
+                <p style="font-weight:600;color:var(--navy);">Enquiry for ${title}</p>
+                <p style="font-size:0.8rem;color:var(--ink3);margin-top:0.25rem;">Chat locked — unlock for ₹${amount} to reply to buyers</p>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="unlockChat('${r.listing_id}')">Unlock</button>
+            </div>`;
+        }
+
+        return `
+          <div class="buyer-row" style="opacity:0.65;">
+            <div style="flex:1;">
+              <p style="font-weight:600;color:var(--navy);">Enquiry for ${title}</p>
+              <p style="font-size:0.8rem;color:var(--ink3);margin-top:0.25rem;">Waiting for seller to unlock chat</p>
+            </div>
+          </div>`;
+      }).join('');
+
       lucide.createIcons();
+    }
+
+    async function unlockChat(listingId) {
+      const { data: { session } } = await sbClient.auth.getSession();
+
+      const orderRes = await fetch('https://wppqwnxtojovegfcdewr.supabase.co/functions/v1/create-razorpay-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ listing_id: listingId }),
+      });
+      const order = await orderRes.json();
+      if (order.error) { toast(order.error, 'error'); return; }
+
+      const rzp = new Razorpay({
+        key: order.key_id,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.order_id,
+        name: "Qurate",
+        description: "Unlock chat for listing",
+        handler: async function (response) {
+          const verifyRes = await fetch('https://wppqwnxtojovegfcdewr.supabase.co/functions/v1/verify-razorpay-payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({
+              listing_id: listingId,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+          const result = await verifyRes.json();
+          if (result.success) {
+            toast('Chat unlocked!', 'success');
+            await loadBuyerInterests();
+          } else {
+            toast('Verification failed: ' + (result.error || 'unknown error'), 'error');
+          }
+        },
+        theme: { color: "#0b3a79" },
+      });
+      rzp.open();
     }
 
     function switchTab(mode) {
