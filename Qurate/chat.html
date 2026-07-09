@@ -261,13 +261,41 @@
         '</div>' +
         '<a class="btn btn-outline btn-sm" href="listing.html?id=' + (listing ? listing.id : '') + '" target="_blank">View listing</a>';
     }
-
+    var profileCache = {}; // uuid -> {first_name, last_name}
+    
     async function loadMessages() {
       var res = await sbClient.from('messages').select('*').eq('interest_id', interest.id).order('created_at', { ascending: true });
       if (res.error) { toast('Failed to load messages.', 'error'); return; }
-      renderMessages(res.data || []);
+    
+      var msgs = res.data || [];
+    
+      // collect unique sender ids not already cached
+      var idsToFetch = [];
+      msgs.forEach(function(m) {
+        if (!profileCache[m.sender_id] && idsToFetch.indexOf(m.sender_id) === -1) {
+          idsToFetch.push(m.sender_id);
+        }
+      });
+    
+      if (idsToFetch.length > 0) {
+        var pRes = await sbClient.from('profiles').select('id, first_name, last_name').in('id', idsToFetch);
+        if (!pRes.error && pRes.data) {
+          pRes.data.forEach(function(p) { profileCache[p.id] = p; });
+        }
+      }
+    
+      renderMessages(msgs);
     }
-
+    
+    function getInitialsFor(senderId) {
+      var p = profileCache[senderId];
+      if (p && (p.first_name || p.last_name)) {
+        var f = (p.first_name || '')[0] || '';
+        var l = (p.last_name || '')[0] || '';
+        return (f + l).toUpperCase() || '?';
+      }
+      return '?';
+    }
     function renderMessages(msgs) {
       var container = document.getElementById('chatMessages');
       var html = '<div class="enquiry-bubble">' +
@@ -287,7 +315,7 @@
           lastDate = dateStr;
         }
 
-        var initials = mine ? getMineInitials() : getTheirsInitials();
+        var initials = getInitialsFor(msg.sender_id);
 
         html += '<div class="msg-row ' + (mine ? 'mine' : 'theirs') + '">' +
           '<div class="msg-avatar ' + (mine ? 'mine' : 'theirs') + '">' + initials + '</div>' +
@@ -299,21 +327,6 @@
       });
 
       container.innerHTML = html;
-    }
-
-    function getMineInitials() {
-      var meta = currentUser.user_metadata || {};
-      var f = (meta.first_name || '')[0] || '';
-      var l = (meta.last_name  || '')[0] || '';
-      return (f + l).toUpperCase() || '?';
-    }
-
-    function getTheirsInitials() {
-      if (interest.buyer_name) {
-        var parts = interest.buyer_name.trim().split(' ');
-        return ((parts[0] || '')[0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
-      }
-      return (interest.buyer_email ? interest.buyer_email[0] : 'U').toUpperCase();
     }
 
     function subscribeRealtime() {
