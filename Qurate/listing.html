@@ -7,6 +7,17 @@
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .listing-grid { display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; align-items:start; }
+
+    /* MOBILE: image on top, details stacked underneath */
+    @media (max-width:720px) {
+      .listing-grid { grid-template-columns:1fr; gap:1.25rem; }
+      main.container { padding-top:1rem !important; padding-bottom:2rem !important; }
+      /* 16px stops iOS Safari zooming on focus */
+      #messageInput { font-size:16px; }
+    }
+  </style>
 </head>
 <body>
 
@@ -29,7 +40,7 @@
     <div id="loadingState" style="padding:4rem 0;text-align:center;color:var(--ink3,#666);">Loading listing…</div>
     <div id="listingContent" style="display:none;">
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start;">
+      <div class="listing-grid">
 
         <!-- Left: image gallery -->
         <div>
@@ -37,9 +48,9 @@
             <img id="mainImage" src="" alt="Listing image"
               style="width:100%;display:block;object-fit:contain;">
             <button id="prevBtn" onclick="shiftImage(-1)"
-              style="display:none;position:absolute;left:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;">‹</button>
+              style="display:none;position:absolute;left:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.1rem;align-items:center;justify-content:center;">‹</button>
             <button id="nextBtn" onclick="shiftImage(1)"
-              style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;">›</button>
+              style="display:none;position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1.1rem;align-items:center;justify-content:center;">›</button>
           </div>
           <div id="thumbRow" style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;"></div>
         </div>

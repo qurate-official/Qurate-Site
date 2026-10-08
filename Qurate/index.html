@@ -15,19 +15,49 @@
       --border-strong:rgba(11,58,121,0.28);
       --r-sm:6px; --r-md:12px; --r-lg:20px; --r-xl:28px;
     }
+    html, body { overflow-x:hidden; margin:0; }
     body { font-family:'DM Sans',system-ui,sans-serif; }
+
+    /* MOBILE: card fills the whole screen, no outer whitespace */
+    @media (max-width:640px) {
+      body.auth-body {
+        display:block !important;
+        min-height:100vh;
+        min-height:100dvh;
+        background:var(--blue-light) !important;
+      }
+      .bg-blob { display:none !important; }
+      .auth-card {
+        box-sizing:border-box;
+        width:100% !important;
+        max-width:none !important;
+        min-height:100vh;
+        min-height:100dvh;
+        margin:0 !important;
+        padding:1.75rem 1.25rem !important;
+        border:none !important;
+        border-radius:0 !important;
+        box-shadow:none !important;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+      }
+      .auth-header { margin-bottom:1.5rem !important; }
+      /* 16px stops iOS Safari zooming the page on input focus */
+      .auth-card input { font-size:16px !important; }
+    }
   </style>
 </head>
-<body style="background:var(--bg);font-family:sans-serif;" class="flex items-center justify-center min-h-screen antialiased">
+<body style="background:var(--bg);font-family:sans-serif;" class="auth-body flex items-center justify-center min-h-screen antialiased">
 
   <!-- Subtle bg texture -->
-  <div style="position:absolute;width:700px;height:700px;background:rgba(195,231,255,0.35);border-radius:50%;filter:blur(140px);top:-200px;left:-200px;pointer-events:none;"></div>
-  <div style="position:absolute;width:600px;height:600px;background:rgba(195,231,255,0.2);border-radius:50%;filter:blur(140px);bottom:-150px;right:-150px;pointer-events:none;"></div>
+  <div class="bg-blob" style="position:absolute;width:700px;height:700px;background:rgba(195,231,255,0.35);border-radius:50%;filter:blur(140px);top:-200px;left:-200px;pointer-events:none;"></div>
+  <div class="bg-blob" style="position:absolute;width:600px;height:600px;background:rgba(195,231,255,0.2);border-radius:50%;filter:blur(140px);bottom:-150px;right:-150px;pointer-events:none;"></div>
 
-  <div style="width:100%;max-width:440px;margin:0 1rem;padding:2.5rem;background:var(--blue-light);border:1px solid var(--border-strong);border-radius:var(--r-xl);box-shadow:0 8px 40px rgba(11,58,121,0.13);position:relative;z-index:10;">
+  <div class="auth-card" style="width:100%;max-width:440px;margin:0 1rem;padding:2.5rem;background:var(--blue-light);border:1px solid var(--border-strong);border-radius:var(--r-xl);box-shadow:0 8px 40px rgba(11,58,121,0.13);position:relative;z-index:10;">
 
     <!-- Header -->
-    <div style="text-align:center;margin-bottom:2rem;">
+    <div class="auth-header" style="text-align:center;margin-bottom:2rem;">
       <img src="../items/logo.jpeg" alt="Qurate" style="width:95px;height:50px;object-fit:cover;margin:0 auto 1rem;display:block;">
       <h2 id="auth-title" style="color:var(--blue-text);font-size:1.75rem;font-weight:800;letter-spacing:-0.02em;margin:0 0 0.5rem;">Welcome back</h2>
       <p id="auth-subtitle" style="color:var(--blue-mid);font-size:0.875rem;margin:0;opacity:0.85;">Log in to manage your listings and profile</p>

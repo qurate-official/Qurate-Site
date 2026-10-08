@@ -2,7 +2,7 @@
 
 A student-to-student marketplace for buying and selling second-hand goods across Delhi NCR college campuses (DTU, NSIT, Jamia Millia, and more).
 
-**🔗 Live site:** [qurate-official.github.io/Qurate-Site](https://qurate-official.github.io/Qurate-Site/)
+**🔗 Live site:** [ishitbhargava.github.io/Qurate-Site](https://ishitbhargava.github.io/Qurate-Site/)
 
 > First load may take a few seconds while images and graphics render.
 

@@ -19,6 +19,7 @@
   --r-sm:6px; --r-md:12px; --r-lg:20px; --r-xl:28px;
 }
 
+html { overflow-x:hidden; -webkit-text-size-adjust:100%; }
 body { font-family:'DM Sans',system-ui,sans-serif; color:var(--ink); background:var(--bg); line-height:1.6; overflow-x:hidden; }
 
 /* NAV */
@@ -125,7 +126,7 @@ nav {
 .ss-arrow-prev { left:20px; }
 .ss-arrow-next { right:20px; }
 .ss-dots { position:absolute; bottom:18px; right:28px; display:flex; gap:6px; z-index:10; }
-.ss-dot { width:6px; height:6px; border-radius:50%; background:rgba(195,231,255,0.35); cursor:pointer; transition:background 0.2s,transform 0.2s; }
+.ss-dot { position:relative; width:6px; height:6px; border-radius:50%; background:rgba(195,231,255,0.35); cursor:pointer; transition:background 0.2s,transform 0.2s; }
 .ss-dot.active { background:var(--blue-light); transform:scale(1.4); }
 .ss-counter { position:absolute; top:18px; right:24px; font-size:12px; font-weight:600; color:var(--on-dark2); background:rgba(5,16,40,0.5); backdrop-filter:blur(6px); padding:4px 10px; border-radius:20px; z-index:10; letter-spacing:0.05em; }
 
@@ -223,7 +224,7 @@ nav {
 
 /* PRODUCT CARD */
 .product-card { flex:0 0 200px; background:var(--navy); border-radius:var(--r-lg); overflow:hidden; cursor:pointer; transition:transform 0.18s; position:relative; }
-.product-card:hover { transform:translateY(-3px); }
+@media (hover:hover){ .product-card:hover { transform:translateY(-3px); } }
 .product-img { width:100%; height:140px; background:#0d2f6a; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
 .product-img img { width:100%; height:100%; object-fit:cover; display:block; }
 .product-img .prod-ph { display:flex; flex-direction:column; align-items:center; gap:6px; color:rgba(195,231,255,0.2); position:absolute; }
@@ -385,39 +386,6 @@ nav {
   55%  { transform:scale(1.03); box-shadow:0 0 0 8px rgba(7,32,80,0.08); }
   100% { transform:scale(1);    box-shadow:0 0 0 0   rgba(7,32,80,0.00); }
 }
-/* JUMPSCARE */
-.jsc-card {
-  flex: 0 0 200px;
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  cursor: default;
-}
-.jsc-card img {
-  width: 100%;
-  height: 340px;
-  object-fit: cover;
-  display: block;
-  animation: jscShrink 0.85s cubic-bezier(0.4,0,0.2,1) both;
-}
-@keyframes jscShrink {
-  0%   { transform: scale(6) translate(0,0); }
-  100% { transform: scale(1); }
-}
-.jsc-overlay {
-  position: fixed; inset: 0; z-index: 9999;
-  background: #000;
-  display: flex; align-items: center; justify-content: center;
-  animation: jscOverlayFade 0.85s cubic-bezier(0.4,0,0.2,1) both;
-  pointer-events: none;
-}
-.jsc-overlay img {
-  width: 100vw; height: 100vh; object-fit: cover;
-}
-@keyframes jscOverlayFade {
-  0%   { opacity: 1; }
-  70%  { opacity: 1; }
-  100% { opacity: 0; }
-}
 /* RESPONSIVE */
 @media (max-width:860px) {
   .demo-layout { grid-template-columns:1fr; gap:2.5rem; }
@@ -429,7 +397,7 @@ nav {
   nav .nav-links { display:none; }
   .hero { padding:3rem 1.25rem 2.5rem; }
   .hero-visual { grid-template-columns:1fr 1fr; }
-  .slideshow-outer { height:55vw; min-height:260px; }
+  .slideshow-outer { height:75vw; min-height:280px; max-height:70vh; }
   .section { padding:3.5rem 1.25rem; }
   .demo-section, .products-section { padding:3rem 1.25rem; }
   .cost-row { grid-template-columns:1fr 1fr; }
@@ -446,6 +414,44 @@ nav {
   .ss-arrow { width:38px; height:38px; font-size:18px; }
   .slide-caption strong { font-size:15px; }
 }
+
+/* ── MOBILE FIXES ── */
+.hero-split { display:grid; grid-template-columns:1fr 48px 1fr; align-items:center; gap:0; }
+.hero-divider { display:flex; justify-content:center; align-self:stretch; }
+.span-2 { grid-column:span 2; }
+.ss-dot::after { content:''; position:absolute; inset:-10px -4px; }
+.testi-wrap { overflow:hidden; }
+
+@media (max-width:860px) {
+  .hero-split { grid-template-columns:1fr; gap:2.5rem; }
+  .hero-divider { display:none; }
+  .hero-split h1, .hero-split > div > p { text-align:center; margin-left:auto; margin-right:auto; }
+}
+
+@media (max-width:640px) {
+  /* keep the Contact CTA, hide the other links */
+  nav { padding:0 1rem; }
+  nav .nav-links { display:flex; gap:0; }
+  nav .nav-links li:not(:last-child) { display:none; }
+
+  .span-2 { grid-column:auto; }
+  .cost-row { grid-template-columns:1fr; }
+  .cost-stat .num { font-size:30px; }
+
+  /* 16px stops iOS Safari zooming on focus */
+  .form-field input, .form-field textarea { font-size:16px; }
+
+  /* native swipe carousels */
+  .products-track-wrap, .testi-wrap {
+    overflow-x:auto; scroll-snap-type:x mandatory;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  }
+  .products-track-wrap::-webkit-scrollbar, .testi-wrap::-webkit-scrollbar { display:none; }
+  .product-card, .testi-card { scroll-snap-align:start; }
+  .products-track, .testi-track { transform:none !important; }
+  .carousel-nav { display:none; }
+}
+
 </style>
 </head>
 <body>
@@ -466,10 +472,10 @@ nav {
   <div class="ss-counter" id="ssCounter">1 / 5</div>
   <div class="slideshow-track" id="ssTrack">
     <div class="slide"><img src="items/s1.png" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 1 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>Where deals happen.</strong><span>Students buy &amp; sell on campus every day.</span></div></div>
-    <div class="slide"><img src="items/s2.png" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 2 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>Verified. Safe. Simple.</strong><span>Your college ID is your entry pass.</span></div></div>
-    <div class="slide"><img src="items/s3.png" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 3 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>Books that find new homes.</strong><span>Every unused textbook is someone's bargain.</span></div></div>
-    <div class="slide"><img src="items/s4.png" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 4 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>List in under 60 seconds.</strong><span>Snap. AI scans. Done.</span></div></div>
-    <div class="slide"><img src="items/s5.png" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 5 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>The campus market, finally online.</strong><span>Coming soon to your college.</span></div></div>
+    <div class="slide"><img src="items/s2.png" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 2 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>Verified. Safe. Simple.</strong><span>Your college ID is your entry pass.</span></div></div>
+    <div class="slide"><img src="items/s3.png" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 3 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>Books that find new homes.</strong><span>Every unused textbook is someone's bargain.</span></div></div>
+    <div class="slide"><img src="items/s4.png" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 4 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>List in under 60 seconds.</strong><span>Snap. AI scans. Done.</span></div></div>
+    <div class="slide"><img src="items/s5.png" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'"><div class="slide-ph"><i class="ti ti-camera"></i><span>photo 5 — replace src</span></div><div class="slide-overlay"></div><div class="slide-caption"><strong>The campus market, finally online.</strong><span>Coming soon to your college.</span></div></div>
   </div>
   <button class="ss-arrow ss-arrow-prev disabled" id="ssPrev" onclick="ssMove(-1)"><i class="ti ti-chevron-left"></i></button>
   <button class="ss-arrow ss-arrow-next" id="ssNext" onclick="ssMove(1)"><i class="ti ti-chevron-right"></i></button>
@@ -478,7 +484,7 @@ nav {
 
 <section class="hero" style="text-align:left; max-width:900px;">
   <center><a href="Qurate/index.html" target="_blank"><div class="eyebrow"><i class="ti ti-sparkles"></i> Student-to-student marketplace</div></a></center>
-  <div style="display:grid; grid-template-columns:1fr 48px 1fr; align-items:center; gap:0;">
+  <div class="hero-split">
     <div>
       <h1>Buy and sell <em>college supplies</em> without the risk.</h1>
       <p style="max-width:380px;">Qurate is the trusted peer marketplace built exclusively for students. Verified accounts, AI-checked product quality, and safe transactions — all in one place.</p><br>
@@ -487,7 +493,7 @@ nav {
         <a href="https://docs.google.com/forms/d/e/1FAIpQLSfPgkQAjy8pf0W02_rqjX70_DjeHuSDsgy9iuXIqmjR54kkKA/viewform?usp=dialog" class="btn-secondary" target="_blank"><i class="ti ti-play"></i>Help us gain some insights!</a>
       </div>
     </div>
-    <div style="display:flex; justify-content:center; align-self:stretch;">
+    <div class="hero-divider">
       <div style="width:0.5px; background:rgba(11,58,121,0.18); height:100%;"></div>
     </div>
     <div style="display:flex; flex-direction:column; gap:10px;">
@@ -499,12 +505,12 @@ nav {
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <div class="product-card">
           <b><p style="text-align: center; color:#ffffff;">Top rated !</p></b>
-          <div class="product-img"><img src="items/i1.jpeg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book"></i><span>photo</span></div><div class="prod-badge">Books</div></div>
+          <div class="product-img"><img src="items/i1.jpeg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book"></i><span>photo</span></div><div class="prod-badge">Books</div></div>
           <div class="product-body"><div class="product-name">HC Verma Vol 1 &amp; 2</div><div class="product-desc">Lightly annotated, all pages intact. JEE prep set from 2023 batch.</div><div class="product-price">₹2400 <span>negotiable</span></div></div>
         </div>
         <div class="product-card">
           <b><p style="text-align: center; color:#ffffff;">Most sold !</p></b>
-          <div class="product-img"><img src="items/i2.jpeg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-calculator"></i><span>photo</span></div><div class="prod-badge">Instruments</div></div>
+          <div class="product-img"><img src="items/i2.jpeg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-calculator"></i><span>photo</span></div><div class="prod-badge">Instruments</div></div>
           <div class="product-body"><div class="product-name">Casio fx-991EX</div><div class="product-desc">Scientific calculator, like new. Cover included. Works perfectly.</div><div class="product-price">₹4500</div></div>
         </div>
       </div>
@@ -530,69 +536,69 @@ nav {
 
       <div class="product-card is-sold">
         <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
-        <div class="product-img"><img src="items/i1.jpeg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book"></i><span>photo</span></div><div class="prod-badge">Books</div></div>
+        <div class="product-img"><img src="items/i1.jpeg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book"></i><span>photo</span></div><div class="prod-badge">Books</div></div>
         <div class="product-body"><div class="product-name">HC Verma Vol 1 &amp; 2</div><div class="product-desc">Lightly annotated, all pages intact. JEE prep set from 2023 batch.</div><div class="product-price">₹2400 <span>negotiable</span></div></div>
       </div>
 
       <div class="product-card is-sold">
         <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
-        <div class="product-img"><img src="items/i2.jpeg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-calculator"></i><span>photo</span></div><div class="prod-badge">Instruments</div></div>
+        <div class="product-img"><img src="items/i2.jpeg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-calculator"></i><span>photo</span></div><div class="prod-badge">Instruments</div></div>
         <div class="product-body"><div class="product-name">Casio fx-991EX</div><div class="product-desc">Scientific calculator, like new. Cover included. Works perfectly.</div><div class="product-price">₹4500</div></div>
       </div>
 
       <div class="product-card is-sold">
         <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
-        <div class="product-img"><img src="items/i3.jpg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-microscope"></i><span>photo</span></div><div class="prod-badge">Lab</div></div>
+        <div class="product-img"><img src="items/i3.jpg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-microscope"></i><span>photo</span></div><div class="prod-badge">Lab</div></div>
         <div class="product-body"><div class="product-name">Lab Coat — Size M</div><div class="product-desc">White, washed once, no stains. Perfect for chem and bio labs.</div><div class="product-price">₹3399</div></div>
       </div>
 
       <div class="product-card is-sold">
         <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
-        <div class="product-img"><img src="items/i4.jpg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-ruler-2"></i><span>photo</span></div><div class="prod-badge">Drafting</div></div>
+        <div class="product-img"><img src="items/i4.jpg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-ruler-2"></i><span>photo</span></div><div class="prod-badge">Drafting</div></div>
         <div class="product-body"><div class="product-name">A1 Drawing Board</div><div class="product-desc">Mini drafter attached, good condition. Used one sem only.</div><div class="product-price">₹6500 <span>or best offer</span></div></div>
       </div>
 
       <div class="product-card is-sold">
         <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
-        <div class="product-img"><img src="items/i5.jpg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-device-laptop"></i><span>photo</span></div><div class="prod-badge">Tech</div></div>
+        <div class="product-img"><img src="items/i5.jpg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-device-laptop"></i><span>photo</span></div><div class="prod-badge">Tech</div></div>
         <div class="product-body"><div class="product-name">Adjustable Laptop Stand</div><div class="product-desc">Aluminium, folds flat. Fits 13"–17". No scratches.</div><div class="product-price">₹4000</div></div>
       </div>
 
       <div class="product-card is-sold">
         <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
-        <div class="product-img"><img src="items/i6.jpeg" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-backpack"></i><span>photo</span></div><div class="prod-badge">Gear</div></div>
+        <div class="product-img"><img src="items/i6.jpeg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'" style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-backpack"></i><span>photo</span></div><div class="prod-badge">Gear</div></div>
         <div class="product-body"><div class="product-name">Campus Backpack 30L</div><div class="product-desc">Laptop pocket, rain cover included. One year old, solid shape.</div><div class="product-price">₹5000 <span>negotiable</span></div></div>
       </div>
 
       <div class="product-card is-sold">
         <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
-        <div class="product-img"><img src="items/i7.jpeg" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Books</div></div>
+        <div class="product-img"><img src="items/i7.jpeg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Books</div></div>
         <div class="product-body"><div class="product-name">Pen kit</div><div class="product-desc">Kit of 10 Gel pens</div><div class="product-price">₹480</div></div>
       </div>
 
       <div class="product-card is-sold">
         <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
-        <div class="product-img"><img src="items/i8.jpg" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Food</div></div>
+        <div class="product-img"><img src="items/i8.jpg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Food</div></div>
         <div class="product-body"><div class="product-name">Coca Cola</div><div class="product-desc">Set of Coca-Cola cans, bottles, and large bottles for collection.</div><div class="product-price">₹220</div></div>
       </div>
       <div class="product-card is-sold">
         <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
-        <div class="product-img"><img src="items/i9.jpg" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Tech</div></div>
+        <div class="product-img"><img src="items/i9.jpg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Tech</div></div>
         <div class="product-body"><div class="product-name">Macbook Air</div><div class="product-desc">Apple MacBook Air M5. Used for 4 years but only light work was done.</div><div class="product-price">₹148000</div></div>
       </div>
       <div class="product-card is-sold">
         <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
-        <div class="product-img"><img src="items/i10.jpg" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Gear</div></div>
+        <div class="product-img"><img src="items/i10.jpg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Gear</div></div>
         <div class="product-body"><div class="product-name">Glass Bottle</div><div class="product-desc">1l size glass bottle with labels in excellent condition.</div><div class="product-price">₹499</div></div>
       </div>
       <div class="product-card is-sold">
         <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
-        <div class="product-img"><img src="items/i11.jpg" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Tech</div></div>
+        <div class="product-img"><img src="items/i11.jpg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Tech</div></div>
         <div class="product-body"><div class="product-name">Printer</div><div class="product-desc">HP Smart Tank 580 All-in-One InkJet printer.</div><div class="product-price">₹48000</div></div>
       </div>
       <div class="product-card is-sold">
         <div class="sold-out-overlay"><div class="sold-stamp"><span class="sold-stamp-text"><span class="sold-line">Sold</span><span class="out-line">Out</span></span></div></div>
-        <div class="product-img"><img src="items/i12.jpg" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Tech</div></div>
+        <div class="product-img"><img src="items/i12.jpg" loading="lazy" decoding="async" alt="" onerror="this.style.display='none'"  style="object-fit: contain;"><div class="prod-ph"><i class="ti ti-book-2"></i><span>photo</span></div><div class="prod-badge">Tech</div></div>
         <div class="product-body"><div class="product-name">Charger</div><div class="product-desc">High-speed Apple 90W fast-charger.</div><div class="product-price">₹4800</div></div>
       </div>
     </div>
@@ -613,7 +619,7 @@ nav {
       <div class="laptop-lid">
         <div class="laptop-camera"></div>
         <div class="laptop-screen-wrap">
-          <video src="items/vid.mp4" autoplay muted loop playsinline id="demoVid">Your browser does not support video.</video>
+          <video src="items/vid.mp4" autoplay muted loop playsinline preload="metadata" id="demoVid">Your browser does not support video.</video>
           <div class="laptop-ph" id="demoPh">
             <i class="ti ti-device-laptop"></i>
             <span>Set src="" on the &lt;video&gt; to show your demo</span>
@@ -648,7 +654,7 @@ nav {
     </div>
   </div>
 
-  <div style="overflow:hidden;">
+  <div class="testi-wrap">
     <div class="testi-track" id="testiTrack" style="display:flex; gap:14px; transition:transform 0.4s cubic-bezier(0.4,0,0.2,1); will-change:transform;">
 
       <div class="testi-card" style="flex:0 0 260px;">
@@ -767,7 +773,7 @@ nav {
     </div>
     <div class="offer-card"><div class="tag"><i class="ti ti-shield-check"></i> Verified</div><h3>College ID verification</h3><p>Every account is tied to a verified institutional email or college ID. You always know you're dealing with a real student.</p></div>
     <div class="offer-card"><div class="tag"><i class="ti ti-lock"></i> Safe Payments</div><h3>Protected transactions</h3><p>Payment is held securely until you confirm the item matches the listing. No transfer until both sides are happy.</p></div>
-    <div class="offer-card light" style="grid-column:span 2;">
+    <div class="offer-card light span-2">
       <div class="tag"><i class="ti ti-bell"></i> Smart Alerts</div>
       <h3>Notify me when it's available</h3>
       <p>Tell Qurate what you need — a specific textbook, calculator model, lab coat size — and get an instant alert the moment a verified seller lists it nearby.</p>
@@ -891,9 +897,6 @@ nav {
   if(v&&v.getAttribute('src')!=='') ph.style.display='none';
   v&&v.addEventListener('loadedmetadata',()=>ph.style.display='none');
 })();
-
-const _jscAudio = new Audio('items/audio.mp3');
-_jscAudio.preload = 'auto';
 
 (function(){
   let testiPos = 0;

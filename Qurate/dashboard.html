@@ -25,7 +25,7 @@
           <a class="btn btn-primary btn-sm" href="add-listing.html">
             <i data-lucide="plus"></i><span>Sell Item</span>
           </a>
-          <button class="btn btn-outline btn-sm" id="logoutBtn">
+          <button class="btn btn-outline btn-sm" id="logoutBtn" aria-label="Log out">
             <i data-lucide="log-out"></i><span>Log out</span>
           </button>
           <div class="profile-circle" id="profileCircle" title="My Account"></div>
@@ -58,6 +58,8 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <style>
+    .hidden { display: none !important; }
+
     .profile-circle {
       width: 38px;
       height: 38px;
@@ -88,12 +90,75 @@
       width: 16px;
       height: 16px;
     }
+
+    /* empty-state messages span the whole grid */
+    .listing-grid > p { grid-column: 1 / -1; }
+    .buyer-row .btn { flex-shrink: 0; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+      .container { padding: 0 1rem; }
+      main.container { padding-top: 1.25rem !important; padding-bottom: 2rem !important; }
+
+      /* nav: logo + Sell + icon-only logout + avatar */
+      .nav-inner { height: 56px; gap: 0.5rem; }
+      .logo-img { width: 80px; height: 42px; }
+      .nav-links { display: none; }
+      .nav-actions { gap: 0.4rem; }
+      .nav-actions .btn { min-height: 36px; }
+      #logoutBtn span { display: none; }
+      #logoutBtn { padding: 0.35rem 0.6rem; }
+      .profile-circle { width: 36px; height: 36px; }
+
+      .page-header { margin-bottom: 1rem !important; }
+      .page-title { font-size: 1.5rem; line-height: 1.2; }
+      .page-sub { font-size: 0.875rem; }
+
+      /* two stats side by side, the money one gets its own full-width row */
+      .dash-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; margin-bottom: 1.25rem; }
+      .dash-stats .stat-card:nth-child(3) { grid-column: 1 / -1; }
+      .stat-card { padding: 0.75rem 0.85rem; }
+      .stat-value { font-size: 1.25rem; white-space: nowrap; }
+      .stat-label { font-size: 0.75rem; }
+
+      /* tabs: equal width, scroll if ever too tight */
+      .tabs { overflow-x: auto; scrollbar-width: none; }
+      .tabs::-webkit-scrollbar { display: none; }
+      .tab { flex: 1 0 auto; padding: 0.7rem 0.75rem; white-space: nowrap; }
+
+      /* two cards per row instead of one giant square */
+      .listing-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+      .listing-body { padding: 0.65rem; }
+      .listing-card:hover { transform: none; }
+
+      .buyer-row { padding: 0.8rem; }
+
+      /* toasts full-width at the bottom */
+      .toast-container { left: 1rem; right: 1rem; bottom: 1rem; }
+    }
   </style>
 
   <script src="supabaseClient.js"></script>
   <script>
     let currentUser = null;
     let currentTab  = 'listings';
+
+    // Escape user-supplied text before putting it into innerHTML
+    function esc(v) {
+      return String(v ?? '').replace(/[&<>"']/g, c => (
+        { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+      ));
+    }
+
+    // Phones: open in the same tab. Desktop: new tab, as before.
+    function openListing(id) {
+      const url = `listing.html?id=${encodeURIComponent(id)}`;
+      if (window.matchMedia('(max-width: 640px)').matches) {
+        window.location.href = url;
+      } else {
+        window.open(url, '_blank');
+      }
+    }
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await sbClient.auth.signOut();
@@ -176,14 +241,14 @@
 
     function listingCard(item) {
       return `
-        <div class="listing-card" onclick="window.open('listing.html?id=${item.id}','_blank')" style="cursor:pointer;">
-          <img class="listing-img" src="${item.images?.[0] || 'placeholder.jpg'}" alt="${item.title}">
+        <div class="listing-card" onclick="openListing('${esc(item.id)}')" style="cursor:pointer;">
+          <img class="listing-img" src="${esc(item.images?.[0] || 'placeholder.jpg')}" alt="${esc(item.title)}" loading="lazy">
           <div class="listing-body">
-            <div class="listing-title">${item.title}</div>
-            <div class="listing-price">₹${item.price}</div>
-            <div style="margin-top:0.5rem;display:flex;align-items:center;gap:0.5rem;">
-              <span class="badge ${item.status === 'available' ? 'badge-green' : 'badge-red'}">${item.status}</span>
-              ${item.ai_score != null ? `<span class="badge" style="background:#e8f0fe;color:#1252a3;">AI ${item.ai_score}/100</span>` : ''}
+            <div class="listing-title">${esc(item.title)}</div>
+            <div class="listing-price">₹${esc(item.price)}</div>
+            <div style="margin-top:0.5rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+              <span class="badge ${item.status === 'available' ? 'badge-green' : 'badge-red'}">${esc(item.status)}</span>
+              ${item.ai_score != null ? `<span class="badge" style="background:#e8f0fe;color:#1252a3;">AI ${esc(item.ai_score)}/100</span>` : ''}
             </div>
           </div>
         </div>`;
@@ -237,14 +302,14 @@
       }
 
       target.innerHTML = all.map(r => {
-        const title = r.listing?.title || 'Unknown listing';
+        const title = esc(r.listing?.title || 'Unknown listing');
         const unlocked = r.listing?.chat_unlocked;
 
         if (unlocked) {
           return `
-            <div class="buyer-row" onclick="window.location.href='chat.html?id=${r.id}'" style="cursor:pointer;">
-              <div style="flex:1;">
-                <p style="font-weight:600;color:var(--navy);">Enquiry for ${title}</p>
+            <div class="buyer-row" onclick="window.location.href='chat.html?id=${esc(r.id)}'" style="cursor:pointer;">
+              <div style="flex:1;min-width:0;">
+                <p style="font-weight:600;color:var(--navy);overflow-wrap:anywhere;">Enquiry for ${title}</p>
               </div>
               <div style="display:flex;align-items:center;">
                 <i data-lucide="chevron-right" style="color:#888;"></i>
@@ -256,18 +321,18 @@
           const amount = Math.round((r.listing?.price || 0) * 0.05);
           return `
             <div class="buyer-row">
-              <div style="flex:1;">
-                <p style="font-weight:600;color:var(--navy);">Enquiry for ${title}</p>
+              <div style="flex:1;min-width:0;">
+                <p style="font-weight:600;color:var(--navy);overflow-wrap:anywhere;">Enquiry for ${title}</p>
                 <p style="font-size:0.8rem;color:var(--ink3);margin-top:0.25rem;">Chat locked — unlock for ₹${amount} to reply to buyers</p>
               </div>
-              <button class="btn btn-primary btn-sm" onclick="unlockChat('${r.listing_id}')">Unlock</button>
+              <button class="btn btn-primary btn-sm" onclick="unlockChat('${esc(r.listing_id)}')">Unlock</button>
             </div>`;
         }
 
         return `
           <div class="buyer-row" style="opacity:0.65;">
-            <div style="flex:1;">
-              <p style="font-weight:600;color:var(--navy);">Enquiry for ${title}</p>
+            <div style="flex:1;min-width:0;">
+              <p style="font-weight:600;color:var(--navy);overflow-wrap:anywhere;">Enquiry for ${title}</p>
               <p style="font-size:0.8rem;color:var(--ink3);margin-top:0.25rem;">Waiting for seller to unlock chat</p>
             </div>
           </div>`;
