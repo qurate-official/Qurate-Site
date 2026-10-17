@@ -7,6 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css" />
+<script>
+/* hero images: try several common names/extensions, then give up quietly (symbol stays visible) */
+function qImg(el){
+  var ex=['jpg','jpeg','png','webp','JPG','JPEG','PNG'];
+  var i=(+el.dataset.i||0)+1; el.dataset.i=i;
+  if(i<ex.length){ el.src=el.dataset.base+'.'+ex[i]; } else { el.style.display='none'; }
+}
+</script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -258,7 +266,8 @@ html { scroll-behavior:smooth; scroll-padding-top:76px; }
 /* HERO CARD STACK */
 .stack { position:relative; height:450px; perspective:900px; text-align:left; animation:fadeSlideUp 0.7s 0.3s ease both; }
 .lc { position:absolute; width:250px; background:var(--navy); border:0.5px solid rgba(195,231,255,0.18); border-radius:var(--r-lg); padding:16px; box-shadow:0 24px 56px rgba(7,32,80,0.28); transition:transform 0.5s; }
-.lc .ph { height:120px; border-radius:var(--r-md); background:linear-gradient(135deg,#0d2f6a,#1252a3); margin-bottom:14px; display:flex; align-items:center; justify-content:center; font-family:'DM Serif Display',serif; font-size:34px; color:rgba(195,231,255,0.6); }
+.lc .ph { position:relative; overflow:hidden; height:120px; border-radius:var(--r-md); background:linear-gradient(135deg,#0d2f6a,#1252a3); margin-bottom:14px; display:flex; align-items:center; justify-content:center; font-family:'DM Serif Display',serif; font-size:34px; color:rgba(195,231,255,0.6); }
+.lc .ph img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
 .lc b { display:block; font-size:15px; font-weight:600; color:var(--on-dark); line-height:1.3; }
 .lc small { display:block; margin-top:3px; font-size:12.5px; line-height:1.5; color:var(--on-dark2); }
 .lc.a { left:0; top:10px; transform:rotate(-6deg); }
@@ -385,9 +394,9 @@ html { scroll-behavior:smooth; scroll-padding-top:76px; }
     </div>
     
     <div class="stack" aria-hidden="true">
-      <div class="lc a"><span class="stamp">Verified</span><div class="ph">✓<img src="items/i1.jpg" alt="" loading="lazy" decoding="async" onerror="if(!this.dataset.t){this.dataset.t=1;this.src=this.src.replace(/\.jpg$/,'.jpeg')}else{this.style.display='none'}"></div><b>Verified students only</b><small>Every seller is a real classmate, confirmed by college ID.</small></div>
-      <div class="lc b"><span class="stamp" style="animation-delay:1.7s">Verified</span><div class="ph">AI<img src="items/i2.jpg" alt="" loading="lazy" decoding="async" onerror="if(!this.dataset.t){this.dataset.t=1;this.src=this.src.replace(/\.jpg$/,'.jpeg')}else{this.style.display='none'}"></div><b>AI-checked listings</b><small>Condition and fair price scanned from a single photo.</small></div>
-      <div class="lc c"><div class="scan"></div><span class="stamp">Verified</span><div class="ph">⇄<img src="items/i3.jpg" alt="" loading="lazy" decoding="async" onerror="if(!this.dataset.t){this.dataset.t=1;this.src=this.src.replace(/\.jpg$/,'.jpeg')}else{this.style.display='none'}"></div><b>Safe campus deals</b><small>Protected payments and in-person meetups on campus.</small></div>
+      <div class="lc a"><span class="stamp">Verified</span><div class="ph" style="position:relative;overflow:hidden">✓<img src="items/i1.jpg" data-base="items/i1" data-i="0" alt="" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block" onerror="qImg(this)"></div><b>Verified students only</b><small>Every seller is a real classmate, confirmed by college ID.</small></div>
+      <div class="lc b"><span class="stamp" style="animation-delay:1.7s">Verified</span><div class="ph" style="position:relative;overflow:hidden">AI<img src="items/i2.jpg" data-base="items/i2" data-i="0" alt="" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block" onerror="qImg(this)"></div><b>AI-checked listings</b><small>Condition and fair price scanned from a single photo.</small></div>
+      <div class="lc c"><div class="scan"></div><span class="stamp">Verified</span><div class="ph" style="position:relative;overflow:hidden">⇄<img src="items/i3.jpg" data-base="items/i3" data-i="0" alt="" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block" onerror="qImg(this)"></div><b>Safe campus deals</b><small>Protected payments and in-person meetups on campus.</small></div>
     </div>
   </div>
 </section>
@@ -489,9 +498,9 @@ html { scroll-behavior:smooth; scroll-padding-top:76px; }
   <p class="lede">We're a founding team spread across India, and we've all felt the problem we're solving.</p>
   <div class="team-grid">
     <article class="tm reveal"><div class="av">J<img src="items/f1.jpg" alt="Junaid Sarmad" loading="lazy" decoding="async" onerror="this.style.display='none'"></div><div class="tb"><h3>Junaid Sarmad</h3><div class="role">Co-founder · Pune</div><q>I got tired of sketchy WhatsApp deals, so we built something I’d actually trust.</q></div></article>
-    <article class="tm reveal"><div class="av">T<img src="items/f2.jpg" alt="Tanissha" loading="lazy" decoding="async" onerror="this.style.display='none'"></div><div class="tb"><h3>Tanissha Gunjal</h3><div class="role">Co-founder · Pune</div><q>Every unused textbook is someone else’s bargain. We just make the match safe.</q></div></article>
-    <article class="tm reveal"><div class="av">I<img src="items/f3.jpg" alt="Ishit" loading="lazy" decoding="async" onerror="this.style.display='none'"></div><div class="tb"><h3>Ishit Bhargava</h3><div class="role">Co-founder · Delhi</div><q>A good deal means nothing if you can’t trust the seller.</q></div></article>
-    <article class="tm reveal"><div class="av">S<img src="items/f4.jpg" alt="Sarah" loading="lazy" decoding="async" onerror="this.style.display='none'"></div><div class="tb"><h3>Sarah Hope Godfrey</h3><div class="role">Co-founder · Chennai</div><q>Buying from a classmate should feel as safe as buying from a store.</q></div></article>
+    <article class="tm reveal"><div class="av">T<img src="items/f2.jpg" alt="Tanissha Gunjal" loading="lazy" decoding="async" onerror="this.style.display='none'"></div><div class="tb"><h3>Tanissha Gunjal</h3><div class="role">Co-founder · Pune</div><q>Every unused textbook is someone else’s bargain. We just make the match safe.</q></div></article>
+    <article class="tm reveal"><div class="av">I<img src="items/f3.jpg" alt="Ishit Bhargava" loading="lazy" decoding="async" onerror="this.style.display='none'"></div><div class="tb"><h3>Ishit Bhargava</h3><div class="role">Co-founder · Delhi</div><q>A good deal means nothing if you can’t trust the seller.</q></div></article>
+    <article class="tm reveal"><div class="av">S<img src="items/f4.jpg" alt="Sarah Hope Godfrey" loading="lazy" decoding="async" onerror="this.style.display='none'"></div><div class="tb"><h3>Sarah Hope Godfrey</h3><div class="role">Co-founder · Chennai</div><q>Buying from a classmate should feel as safe as buying from a store.</q></div></article>
   </div>
 </section>
 
