@@ -39,9 +39,9 @@ Keeping payment keys and the scoring prompt/API key inside Edge Functions (rathe
 
 ## Tech stack
 
-- HTML / CSS / vanilla JS (no framework, no build step)
+- HTML / CSS / vanilla JS
 - [Supabase](https://supabase.com) — Auth, Postgres DB, Storage, Edge Functions
-- [Razorpay](https://razorpay.com) — payments
+- [Razorpay](https://razorpay.com) — payments (not really implemented as of now)
 - [OpenRouter](https://openrouter.ai) (Gemini) — AI image/listing scoring
 - GitHub Pages — hosting
 
